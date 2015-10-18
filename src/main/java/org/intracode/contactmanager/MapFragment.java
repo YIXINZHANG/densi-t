@@ -51,10 +51,11 @@ public class MapFragment extends Fragment {
     private int hour;
     private int minute;
 
-    @Override
-    public View onCreateView(LayoutInflater inflater, ViewGroup container,
+    private ArrayList<String> buildingNames = new ArrayList<String>();
+    private ArrayList<LatLng> positions = new ArrayList<LatLng>();
 
-                             Bundle savedInstanceState) {
+    @Override
+    public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
 
         // inflat and return the layout
 
@@ -70,8 +71,25 @@ public class MapFragment extends Fragment {
 
         parentActivity = getActivity();
 
-        final LocationManager lm = (LocationManager) parentActivity.getSystemService( Context.LOCATION_SERVICE );
+        buildingNames.add("Culc");
+        positions.add(new LatLng(33.774599, -84.396372));
 
+        buildingNames.add("Student Center");
+        positions.add(new LatLng(33.774028, -84.398818));
+
+        buildingNames.add("Library");
+        positions.add(new LatLng(33.774327, -84.395825));
+
+        buildingNames.add("CRC");
+        positions.add(new LatLng(33.77562, -84.403753));
+
+        buildingNames.add("Klaus");
+        positions.add(new LatLng(33.777212,-84.396281));
+
+        buildingNames.add("CoC");
+        positions.add(new LatLng(33.777386,-84.39738));
+
+        final LocationManager lm = (LocationManager) parentActivity.getSystemService( Context.LOCATION_SERVICE );
         Criteria c = new Criteria();
         String provider = lm.getBestProvider(c, false);
         cLocation = lm.getLastKnownLocation(provider);
@@ -79,17 +97,23 @@ public class MapFragment extends Fragment {
             pLong = cLocation.getLongitude();
             pLat = cLocation.getLatitude();
         }
-        LatLng currentLocation = new LatLng(pLat, pLong);
+        currentLocation = new LatLng(pLat, pLong);
 
         MapsInitializer.initialize(parentActivity.getApplicationContext());
         map = mapView.getMap();
         map.getUiSettings().setMyLocationButtonEnabled(false);
         map.setMyLocationEnabled(true);
+        Location myLocation = map.getMyLocation();
+        currentLocation = new LatLng(33.775618, -84.396285);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
         cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f);
         map.animateCamera(cameraUpdate);
 
+        for (int i=0; i < positions.size(); i++) {
+            map.addMarker(new MarkerOptions().position(positions.get(i))
+                    .title(buildingNames.get(i)));
+        }
         return fragment;
 
     }

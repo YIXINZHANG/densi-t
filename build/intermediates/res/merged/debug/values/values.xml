@@ -1,5 +1,21 @@
 <?xml version="1.0" encoding="utf-8"?>
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
+    <!-- From: file:/C:/Users/pbz18_000/Desktop/Densi-T/densi-t/src/main/res/values/strings.xml -->
+    <eat-comment/>
+    <string-array name="time_array">
+        <item>00:00-02:00am</item>
+        <item>02:00-04:00am</item>
+        <item>04:00-06:00am</item>
+        <item>06:00-08:00am</item>
+        <item>08:00-10:00am</item>
+        <item>10:00-12:00am</item>
+        <item>12:00-02:00pm</item>
+        <item>02:00-04:00pm</item>
+        <item>04:00-06:00pm</item>
+        <item>06:00-08:00pm</item>
+        <item>08:00-10:00pm</item>
+        <item>10:00-12:00pm</item>
+    </string-array>
     <!-- From: file:/C:/Users/pbz18_000/Desktop/Densi-T/densi-t/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
     <eat-comment/>
     <attr format="reference" name="drawerArrowStyle"/>

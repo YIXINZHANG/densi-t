@@ -5,6 +5,10 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.view.View;
+import android.widget.AdapterView;
+import android.widget.ArrayAdapter;
+import android.widget.Spinner;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -32,7 +36,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     private FragmentManager fragmentManager;
 
-    private String[] tabs = {"Search", "Map"};
+    private String[] tabs = {"Building", "Map"};
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
@@ -47,7 +51,6 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         viewPager.setAdapter(mAdapter);
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
-
 
         for (String tab_name : tabs) {
             actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(this));

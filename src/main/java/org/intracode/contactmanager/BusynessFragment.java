@@ -10,6 +10,7 @@ import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.ListView;
+import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
@@ -30,6 +31,9 @@ public class BusynessFragment extends Fragment {
     private Random rand;
     private ListView listView;
     private ArrayAdapter<String> adapter;
+    private GlobalVariables gv;
+    private int position = 0;
+    private Spinner spinner;
 
     private Calendar c;
 //    private int dayOfWeek;
@@ -56,12 +60,45 @@ public class BusynessFragment extends Fragment {
         hours.add("06:00-08:00pm");
         hours.add("08:00-10:00pm");
         hours.add("10:00-12:00pm");
-
         c = Calendar.getInstance();
+        spinner = (Spinner) getActivity().findViewById(R.id.building_spinner);
+
+        // Create an ArrayAdapter using the string array and a default spinner layout
+        ArrayAdapter<CharSequence> adapters = ArrayAdapter.createFromResource(getActivity(), R.array.buildings_array, android.R.layout.simple_spinner_item);
+        // Specify the layout to use when the list of choices appears
+        adapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+        // Apply the adapter to the spinner
+        spinner.setAdapter(adapters);
+        spinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+
+            @Override
+            public void onItemSelected(AdapterView<?> parent, View view,
+                                       int position, long id) {
+                // TODO Auto-generated method stub
+
+
+                adapter.notifyDataSetChanged();
+            }
+
+            @Override
+            public void onNothingSelected(AdapterView<?> parent) {
+                // TODO Auto-generated method stub
+
+            }
+        });
+        spinner.setSelection(position);
 //        dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 //        hour = c.get(Calendar.HOUR_OF_DAY);
 //        minute = c.get(Calendar.MINUTE);
         displayListView();
+
+    }
+
+    @Override
+    public void onResume() {
+        super.onResume();
+//        spinner.setSelection(position);
+//        adapter.notifyDataSetChanged();
 
     }
 
@@ -73,6 +110,15 @@ public class BusynessFragment extends Fragment {
         }
         View view = inflater.inflate(R.layout.fragment_busyness, container, false);
         return view;
+    }
+
+    public void reload(int p) {
+        spinner.setSelection(position);
+        adapter.notifyDataSetChanged();
+        this.position = p;
+        spinner.setSelection(position);
+        adapter.notifyDataSetChanged();
+//        this.onResume();
     }
 
     private void displayListView() {

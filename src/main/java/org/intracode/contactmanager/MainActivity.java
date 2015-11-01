@@ -15,7 +15,7 @@ import java.util.List;
 
 
 
-public class MainActivity extends ActionBarActivity implements ActionBar.TabListener {
+public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, BuildingListFragment.UpdateListener, MapFragment.UpdateListener2{
 
     /**
      * Instance variable for ServerUtility.
@@ -36,7 +36,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
      */
     private FragmentManager fragmentManager;
 
-    private String[] tabs = {"Building", "Map"};
+    private String[] tabs = {"Building", "Busyness", "Map"};
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
@@ -91,6 +91,22 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     @Override
     public void onTabReselected(ActionBar.Tab tab, android.support.v4.app.FragmentTransaction fragmentTransaction) {
+
+    }
+
+    public void onArticleSelected(int position) {
+        // The user selected the headline of an article from the HeadlinesFragment
+        // Do something here to display that article
+        BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
+        busynessFragment.reload(position);
+
+    }
+
+    public void onArticleSelected2(int position) {
+        // The user selected the headline of an article from the HeadlinesFragment
+        // Do something here to display that article
+        BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
+        busynessFragment.reload(position);
 
     }
 }

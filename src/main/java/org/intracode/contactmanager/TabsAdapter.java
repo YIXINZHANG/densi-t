@@ -20,6 +20,8 @@ public class TabsAdapter extends FragmentPagerAdapter {
             case 0:
                 return new BuildingListFragment();
             case 1:
+                return new BusynessFragment();
+            case 2:
                 return new MapFragment();
         }
 
@@ -29,7 +31,7 @@ public class TabsAdapter extends FragmentPagerAdapter {
     @Override
     public int getCount() {
         // get item count - equal to number of tabs
-        return 2;
+        return 3;
     }
 
 }

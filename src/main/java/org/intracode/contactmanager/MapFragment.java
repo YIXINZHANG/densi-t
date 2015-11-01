@@ -10,6 +10,8 @@ import android.location.Location;
 import android.location.LocationManager;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
+import android.support.v7.app.ActionBar;
+import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -32,6 +34,7 @@ import java.util.Collections;
 import java.util.HashMap;
 import java.util.List;
 import java.util.Map;
+import java.util.Random;
 
 /**
  * Created by pbz18_000 on 10/18/2015.
@@ -47,12 +50,30 @@ public class MapFragment extends Fragment {
     private View fragment;
     private CameraUpdate cameraUpdate;
     private Calendar c;
-    private int dayOfWeek;
-    private int hour;
-    private int minute;
+    private ActionBar actionBar;
+
 
     private ArrayList<String> buildingNames = new ArrayList<String>();
     private ArrayList<LatLng> positions = new ArrayList<LatLng>();
+    private ArrayList<Marker> mapMarker = new ArrayList<Marker>();
+    UpdateListener2 mCallback2;
+
+    public interface UpdateListener2 {
+        public void onArticleSelected2(int position);
+    }
+
+    @Override
+    public void onAttach(Activity activity) {
+        super.onAttach(activity);
+
+        // This makes sure that the container activity has implemented
+        // the callback interface. If not, it throws an exception
+        try {
+            mCallback2 = (UpdateListener2) activity;
+        } catch (ClassCastException e) {
+
+        }
+    }
 
     @Override
     public View onCreateView(LayoutInflater inflater, ViewGroup container, Bundle savedInstanceState) {
@@ -64,10 +85,10 @@ public class MapFragment extends Fragment {
         mapView = (MapView) fragment.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
-        c = Calendar.getInstance();
-        dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        hour = c.get(Calendar.HOUR_OF_DAY);
-        minute = c.get(Calendar.MINUTE);
+//        c = Calendar.getInstance();
+//        dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+//        hour = c.get(Calendar.HOUR_OF_DAY);
+//        minute = c.get(Calendar.MINUTE);
 
         parentActivity = getActivity();
 
@@ -111,9 +132,13 @@ public class MapFragment extends Fragment {
         map.animateCamera(cameraUpdate);
 
         for (int i=0; i < positions.size(); i++) {
-            map.addMarker(new MarkerOptions().position(positions.get(i))
-                    .title(buildingNames.get(i)));
+//            map.addMarker(new MarkerOptions().position(positions.get(i))
+//                            .title(buildingNames.get(i)));
+
+            Marker md = map.addMarker(new MarkerOptions().position(positions.get(i))
+                            .title(buildingNames.get(i)));
         }
+        map.setOnInfoWindowClickListener(new WindowHandler());
         return fragment;
 
     }
@@ -154,5 +179,17 @@ public class MapFragment extends Fragment {
 
     }
 
+    private class WindowHandler implements GoogleMap.OnInfoWindowClickListener {
 
+        @Override
+        public void onInfoWindowClick(Marker marker) {
+            // TODO Auto-generated method stub
+            String buidlingName = marker.getTitle();
+            int number = buildingNames.indexOf(buidlingName);
+            System.out.println(buidlingName + number);
+            mCallback2.onArticleSelected2(number);
+            actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
+            actionBar.setSelectedNavigationItem(1);
+        }
+    }
 }

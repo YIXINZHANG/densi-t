@@ -17,7 +17,9 @@ public final class R {
         public static final int abc_slide_out_top=0x7f040005;
     }
     public static final class array {
-        public static final int time_array=0x7f0b0000;
+        public static final int buildings_array=0x7f0b0000;
+        public static final int day_array=0x7f0b0001;
+        public static final int time_array=0x7f0b0002;
     }
     public static final class attr {
         /** <p>Must be a reference to another resource, in the form "<code>@[+][<i>package</i>:]<i>type</i>:<i>name</i></code>"
@@ -1709,15 +1711,17 @@ containing a value of this type.
         public static final int action_mode_bar=0x7f0d0042;
         public static final int action_mode_bar_stub=0x7f0d0041;
         public static final int action_mode_close_button=0x7f0d0034;
-        public static final int action_settings=0x7f0d0059;
+        public static final int action_settings=0x7f0d005e;
         public static final int activity_chooser_view_content=0x7f0d0035;
         public static final int adjust_height=0x7f0d0016;
         public static final int adjust_width=0x7f0d0017;
         public static final int always=0x7f0d001b;
         public static final int beginning=0x7f0d0013;
         public static final int book_now=0x7f0d002b;
-        public static final int buildingName=0x7f0d0057;
-        public static final int busyness=0x7f0d0058;
+        public static final int buildingName=0x7f0d005c;
+        public static final int building_spinner=0x7f0d0057;
+        public static final int busyness=0x7f0d005d;
+        public static final int busynessHours=0x7f0d005b;
         public static final int buyButton=0x7f0d0028;
         public static final int buy_now=0x7f0d002c;
         public static final int buy_with_google=0x7f0d002d;
@@ -1725,6 +1729,7 @@ containing a value of this type.
         public static final int classic=0x7f0d002f;
         public static final int collapseActionView=0x7f0d001c;
         public static final int container=0x7f0d0053;
+        public static final int date_spinner=0x7f0d0055;
         public static final int decor_content_parent=0x7f0d0043;
         public static final int default_activity_button=0x7f0d0038;
         public static final int dialog=0x7f0d0020;
@@ -1740,14 +1745,16 @@ containing a value of this type.
         public static final int holo_light=0x7f0d0024;
         public static final int home=0x7f0d0004;
         public static final int homeAsUp=0x7f0d000d;
+        public static final int hours=0x7f0d005a;
         public static final int hybrid=0x7f0d0018;
         public static final int icon=0x7f0d003a;
         public static final int ifRoom=0x7f0d001d;
         public static final int image=0x7f0d0037;
         public static final int listMode=0x7f0d0009;
         public static final int list_item=0x7f0d0039;
-        public static final int listview=0x7f0d0055;
-        public static final int mapView=0x7f0d0056;
+        public static final int listview=0x7f0d0056;
+        public static final int listview2=0x7f0d0058;
+        public static final int mapView=0x7f0d0059;
         public static final int match_parent=0x7f0d002a;
         public static final int middle=0x7f0d0015;
         public static final int monochrome=0x7f0d0031;
@@ -1817,9 +1824,11 @@ containing a value of this type.
         public static final int abc_simple_dropdown_hint=0x7f030016;
         public static final int activity_main=0x7f030017;
         public static final int fragment_buildinglist=0x7f030018;
-        public static final int fragment_map=0x7f030019;
-        public static final int listview_item=0x7f03001a;
-        public static final int support_simple_spinner_dropdown_item=0x7f03001b;
+        public static final int fragment_busyness=0x7f030019;
+        public static final int fragment_map=0x7f03001a;
+        public static final int listview_hours=0x7f03001b;
+        public static final int listview_item=0x7f03001c;
+        public static final int support_simple_spinner_dropdown_item=0x7f03001d;
     }
     public static final class menu {
         public static final int main=0x7f0e0000;

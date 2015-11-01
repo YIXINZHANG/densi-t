@@ -1,6 +1,6 @@
 -- Merging decision tree log ---
 manifest
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:2:1-52:12
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:2:1-53:12
 	xmlns:android
 		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:2:11-69
 	package
@@ -81,46 +81,48 @@ MERGED from [com.android.support:support-v4:21.0.3] C:\Users\pbz18_000\Desktop\D
 		INJECTED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml
 		INJECTED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml
 application
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:28:5-48:19
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:28:5-49:19
 MERGED from [com.android.support:support-v4:21.0.3] C:\Users\pbz18_000\Desktop\Densi-T\densi-t\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\AndroidManifest.xml:16:5-19
 MERGED from [com.google.android.gms:play-services:6.5.87] C:\Users\pbz18_000\Desktop\Densi-T\densi-t\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.5.87\AndroidManifest.xml:20:5-24:19
 MERGED from [com.android.support:support-v4:21.0.3] C:\Users\pbz18_000\Desktop\Densi-T\densi-t\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\AndroidManifest.xml:16:5-19
 MERGED from [com.android.support:appcompat-v7:21.0.3] C:\Users\pbz18_000\Desktop\Densi-T\densi-t\build\intermediates\exploded-aar\com.android.support\appcompat-v7\21.0.3\AndroidManifest.xml:16:5-19
 MERGED from [com.android.support:support-v4:21.0.3] C:\Users\pbz18_000\Desktop\Densi-T\densi-t\build\intermediates\exploded-aar\com.android.support\support-v4\21.0.3\AndroidManifest.xml:16:5-19
 	android:label
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:31:9-41
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:32:9-41
 	android:allowBackup
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:29:9-35
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:30:9-35
 	android:icon
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:30:9-45
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:31:9-45
 	android:theme
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:32:9-53
-meta-data#com.google.android.maps.v2.API_KEY
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:33:9-35:71
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:33:9-53
 	android:name
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:34:13-62
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:29:9-40
+meta-data#com.google.android.maps.v2.API_KEY
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:34:9-36:71
+	android:name
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:35:13-62
 	android:value
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:35:13-68
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:36:13-68
 meta-data#com.google.android.gms.version
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:36:9-38:69
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:37:9-39:69
 MERGED from [com.google.android.gms:play-services:6.5.87] C:\Users\pbz18_000\Desktop\Densi-T\densi-t\build\intermediates\exploded-aar\com.google.android.gms\play-services\6.5.87\AndroidManifest.xml:21:9-23:69
 	android:name
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:37:13-58
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:38:13-58
 	android:value
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:38:13-66
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:39:13-66
 activity#org.intracode.contactmanager.MainActivity
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:39:9-47:20
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:40:9-48:20
 	android:label
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:41:13-45
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:42:13-45
 	android:name
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:40:13-69
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:41:13-69
 intent-filter#android.intent.action.MAIN+android.intent.category.LAUNCHER
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:42:13-46:29
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:43:13-47:29
 action#android.intent.action.MAIN
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:43:17-69
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:44:17-69
 	android:name
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:43:25-66
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:44:25-66
 category#android.intent.category.LAUNCHER
-ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:45:17-77
+ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:46:17-77
 	android:name
-		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:45:27-74
+		ADDED from C:\Users\pbz18_000\Desktop\Densi-T\densi-t\src\main\AndroidManifest.xml:46:27-74

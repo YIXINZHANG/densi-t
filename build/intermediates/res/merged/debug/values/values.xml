@@ -2,6 +2,23 @@
 <resources xmlns:ns1="urn:oasis:names:tc:xliff:document:1.2">
     <!-- From: file:/C:/Users/pbz18_000/Desktop/Densi-T/densi-t/src/main/res/values/strings.xml -->
     <eat-comment/>
+    <string-array name="buildings_array">
+        <item>Culc</item>
+        <item>Student Center</item>
+        <item>Library</item>
+        <item>CRC</item>
+        <item>Klaus</item>
+        <item>CoC</item>
+    </string-array>
+    <string-array name="day_array">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
     <string-array name="time_array">
         <item>00:00-02:00am</item>
         <item>02:00-04:00am</item>

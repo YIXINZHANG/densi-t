@@ -19,4 +19,21 @@
         <item>08:00-10:00pm</item>
         <item>10:00-12:00pm</item>
     </string-array>
+    <string-array name="buildings_array">
+        <item>Culc</item>
+        <item>Student Center</item>
+        <item>Library</item>
+        <item>CRC</item>
+        <item>Klaus</item>
+        <item>CoC</item>
+    </string-array>
+    <string-array name="day_array">
+        <item>Monday</item>
+        <item>Tuesday</item>
+        <item>Wednesday</item>
+        <item>Thursday</item>
+        <item>Friday</item>
+        <item>Saturday</item>
+        <item>Sunday</item>
+    </string-array>
 </resources>

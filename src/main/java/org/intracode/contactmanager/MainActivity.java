@@ -99,6 +99,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // Do something here to display that article
         BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
         busynessFragment.reload(position);
+        MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
+        mapFragment.reload(position);
+
 
     }
 
@@ -107,6 +110,8 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         // Do something here to display that article
         BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
         busynessFragment.reload(position);
+        MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
+        mapFragment.reload(position);
 
     }
 }

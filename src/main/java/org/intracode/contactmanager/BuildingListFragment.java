@@ -4,6 +4,7 @@ package org.intracode.contactmanager;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
+import android.graphics.Color;
 import android.location.Criteria;
 import android.location.LocationManager;
 import android.os.Bundle;
@@ -25,6 +26,7 @@ import android.widget.Spinner;
 import android.widget.TextView;
 import android.widget.Toast;
 
+import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
 import com.google.android.gms.maps.model.LatLng;
 
 import java.util.ArrayList;
@@ -41,6 +43,7 @@ public class BuildingListFragment extends Fragment {
     private TextView name;
     private Random rand;
     private ListView listView;
+    private RoundCornerProgressBar progress1;
     private ArrayAdapter<String> adapter;
     private ActionBar actionBar;
     private GlobalVariables gv;
@@ -145,7 +148,7 @@ public class BuildingListFragment extends Fragment {
             }
         });
 //        int position = hour/2;
-        dateSpinner.setSelection(position);
+        timeSpinner.setSelection(position);
         displayListView();
 
         }
@@ -193,10 +196,16 @@ public class BuildingListFragment extends Fragment {
 
             name = (TextView) view.findViewById(R.id.buildingName);
             name.setText(buildingName);
-            busyness = (TextView) view.findViewById(R.id.busyness);
+
             rand = new Random();
             int percent = rand.nextInt(41) + 40;
+            busyness = (TextView) view.findViewById(R.id.busyness);
             busyness.setText(Integer.toString(percent) + "%");
+            progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
+            progress1.setProgressColor(Color.parseColor("#6960ec"));
+            progress1.setBackgroundColor(Color.parseColor("#e5e4e2"));
+            progress1.setMax(100);
+            progress1.setProgress(percent);
 
             return view;
         }

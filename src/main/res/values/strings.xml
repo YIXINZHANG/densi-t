@@ -36,4 +36,38 @@
         <item>Saturday</item>
         <item>Sunday</item>
     </string-array>
+    <string-array name="coc_array">
+        <item>1st floor</item>
+        <item>2nd floor</item>
+        <item>3rd floor</item>
+    </string-array>
+    <string-array name="culc_array">
+        <item>1st floor</item>
+        <item>2nd floor</item>
+        <item>3rd floor</item>
+        <item>4th floor</item>
+        <item>5th floor</item>
+    </string-array>
+    <string-array name="sc_array">
+        <item>1st floor</item>
+        <item>2nd floor</item>
+        <item>3rd floor</item>
+    </string-array>
+    <string-array name="library_array">
+        <item>1st floor</item>
+        <item>2nd floor</item>
+        <item>3rd floor</item>
+        <item>4th floor</item>
+        <item>5th floor</item>
+    </string-array>
+    <string-array name="crc_array">
+        <item>1st floor</item>
+        <item>2nd floor</item>
+        <item>4th floor</item>
+    </string-array>
+    <string-array name="klaus_array">
+        <item>1st floor</item>
+        <item>2nd floor</item>
+        <item>3rd floor</item>
+    </string-array>
 </resources>

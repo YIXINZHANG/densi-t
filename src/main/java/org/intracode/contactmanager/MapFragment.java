@@ -143,6 +143,12 @@ public class MapFragment extends Fragment {
 
     }
 
+    public void reload(int p) {
+        LatLng position = positions.get(p);
+        cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 15.0f);
+        map.animateCamera(cameraUpdate);
+    }
+
     @Override
     public void onResume() {
 

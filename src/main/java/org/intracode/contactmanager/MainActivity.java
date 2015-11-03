@@ -117,24 +117,24 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    public void onArticleSelected(int position) {
+    public void onArticleSelected(int position, String id, String name) {
         // The user selected the headline of an article from the HeadlinesFragment
         // Do something here to display that article
         BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
-        busynessFragment.reload(position);
+        busynessFragment.reload(position, id, name);
         MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
-        mapFragment.reload(position);
+        mapFragment.reload(position, id, name);
 
 
     }
 
-    public void onArticleSelected2(int position) {
+    public void onArticleSelected2(int position, String id, String name) {
         // The user selected the headline of an article from the HeadlinesFragment
         // Do something here to display that article
         BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
-        busynessFragment.reload(position);
+        busynessFragment.reload(position, id, name);
         MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
-        mapFragment.reload(position);
+        mapFragment.reload(position, id, name);
 
     }
 

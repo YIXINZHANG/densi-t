@@ -149,7 +149,7 @@ public class BusynessFragment extends Fragment {
         return view;
     }
 
-    public void reload(int p) {
+    public void reload(int p, String id, String name) {
 //        spinner.setSelection(position);
 //        adapter.notifyDataSetChanged();
         this.position = p;

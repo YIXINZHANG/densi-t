@@ -82,7 +82,7 @@ public class BuildingListFragment extends Fragment {
     UpdateListener mCallback;
 
     public interface UpdateListener {
-        public void onArticleSelected(int position);
+        public void onArticleSelected(int position, String id, String name);
     }
 
     @Override
@@ -211,8 +211,11 @@ public class BuildingListFragment extends Fragment {
             @Override
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
-                gv.setSelected(position);
-                mCallback.onArticleSelected(position);
+                ///////////////////////////////////////////////////////////////////////////
+                String name = "Something"; // please add the name of building
+                String id = "ID"; // add the ID
+                ///////////////////////////////////////////////////////////////////////////
+                mCallback.onArticleSelected(position, id, name);
                 actionBar.setSelectedNavigationItem(1);
 
 

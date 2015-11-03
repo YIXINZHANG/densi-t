@@ -59,7 +59,7 @@ public class MapFragment extends Fragment {
     UpdateListener2 mCallback2;
 
     public interface UpdateListener2 {
-        public void onArticleSelected2(int position);
+        public void onArticleSelected2(int position, String id, String name);
     }
 
     @Override
@@ -143,7 +143,7 @@ public class MapFragment extends Fragment {
 
     }
 
-    public void reload(int p) {
+    public void reload(int p, String id, String name) {
         LatLng position = positions.get(p);
         cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 15.0f);
         map.animateCamera(cameraUpdate);
@@ -193,7 +193,11 @@ public class MapFragment extends Fragment {
             String buidlingName = marker.getTitle();
             int number = buildingNames.indexOf(buidlingName);
             System.out.println(buidlingName + number);
-            mCallback2.onArticleSelected2(number);
+            ///////////////////////////////////////////////////////////////////////////
+            String name = "Something"; // please add the name of building
+            String id = "ID"; // add the ID
+            ///////////////////////////////////////////////////////////////////////////
+            mCallback2.onArticleSelected2(number, id, name);
             actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
             actionBar.setSelectedNavigationItem(1);
         }

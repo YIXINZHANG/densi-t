@@ -102,12 +102,15 @@ public class BuildingListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String[] params = new String[2];
+        String[] params = new String[4];
         params[0] = API;
         params[1] = "1";
+        params[2] = Long.toString(System.currentTimeMillis() / 1000L);
+        params[3] = Long.toString(System.currentTimeMillis() / 1000L);
+        Log.d("TIME", params[3]);
         Busyness busy = new Busyness();
-        busy.execute(API);
-//        busy.execute(params);//TESTING
+//        busy.execute(API);
+        busy.execute(params);//TESTING
 
     }
 
@@ -265,7 +268,7 @@ public class BuildingListFragment extends Fragment {
             if (paramLength == 3 || paramLength >=5) {
                 Log.d("ERROR", "params length error");
             }
-            if (paramLength ==2) {
+            if (paramLength >=2) {
                 urlString = urlString + "/" + params[1];
                 Log.d("URL", urlString);
             }
@@ -319,16 +322,13 @@ public class BuildingListFragment extends Fragment {
             //parse json
             try {
                 JSONObject js = new JSONObject(response);
-                JSONArray bldgs = js.getJSONArray("locations");
-                for(int i = 0 ; i < bldgs.length() ; i++){
-                    JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
-                    String id = bldgs.getJSONObject(i).getString("id");
-                    String value = keys.toString();
-                    String[]tokens = value.split(":");
-                    String percent = tokens[tokens.length-1];
-                    bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
-                    Log.d("JSON", "key =" + id + "busyness" + percent);
-                }
+                JSONObject keys = js.getJSONObject("busyness");
+                String id = js.getString("id");
+                String value = keys.toString();
+                String[]tokens = value.split(":");
+                String percent = tokens[tokens.length-1];
+                bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+                Log.d("JSON", "key =" + id + "busyness" + percent);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -381,15 +381,23 @@ public class BuildingListFragment extends Fragment {
 //            startActivity(intent);
 //            testPrint.setText(result);
 
-            if (w.numOfParams == 1)   getLocations(w.result);
+            if (w.numOfParams == 1)   {
+                getLocations(w.result);
+                buildingNames.clear();
+                for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
+                {
+//                Log.d("MAPPING", bldgnames.get(entry.getKey()));
+                    buildingNames.add(entry.getKey());
+                }
+            }
             if (w.numOfParams == 2)   getBusynessNow(w.result);
             if (w.numOfParams == 4)   getBusynessAtTime(w.result);
-            buildingNames.clear();
-            for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
-            {
-                Log.d("MAPPING", bldgnames.get(entry.getKey()));
-                buildingNames.add(entry.getKey());
-            }
+//            buildingNames.clear();
+//            for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
+//            {
+////                Log.d("MAPPING", bldgnames.get(entry.getKey()));
+//                buildingNames.add(entry.getKey());
+//            }
 
         }
     }

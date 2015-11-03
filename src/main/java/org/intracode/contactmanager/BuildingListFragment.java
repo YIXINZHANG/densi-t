@@ -4,13 +4,16 @@ package org.intracode.contactmanager;
 import android.app.Activity;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.Intent;
 import android.graphics.Color;
 import android.location.Criteria;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.FragmentTransaction;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -27,11 +30,26 @@ import android.widget.TextView;
 import android.widget.Toast;
 
 import com.akexorcist.roundcornerprogressbar.RoundCornerProgressBar;
+import com.google.android.gms.games.Players;
 import com.google.android.gms.maps.model.LatLng;
 
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.Calendar;
+import java.util.HashMap;
+import java.util.Iterator;
 import java.util.List;
+import java.util.Map;
 import java.util.Random;
 
 public class BuildingListFragment extends Fragment {
@@ -40,8 +58,13 @@ public class BuildingListFragment extends Fragment {
     private ArrayList<String> buildingNames = new ArrayList<String>();
     private ArrayList<LatLng> positions = new ArrayList<LatLng>();
     private TextView busyness;
+    public  Map<String, String> bldgnames = new HashMap<String, String>();
+    public  Map<String, String> bldglocs = new HashMap<String, String>();
+    public  Map<String, String> bldgbusyness = new HashMap<String, String>();
+    public  Map<String, String> busynessTemp = new HashMap<String, String>();
     private TextView name;
-    private Random rand;
+//    private TextView testPrint;
+//    private Random rand;
     private ListView listView;
     private RoundCornerProgressBar progress1;
     private ArrayAdapter<String> adapter;
@@ -53,6 +76,8 @@ public class BuildingListFragment extends Fragment {
     private int dayOfWeek;
     private int hour;
     private int minute;
+
+    private String API = "http://densit-api.appspot.com/locations";
 
     UpdateListener mCallback;
 
@@ -77,6 +102,13 @@ public class BuildingListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
+        String[] params = new String[2];
+        params[0] = API;
+        params[1] = "1";
+        Busyness busy = new Busyness();
+        busy.execute(API);
+//        busy.execute(params);//TESTING
+
     }
 
     @Override
@@ -85,20 +117,23 @@ public class BuildingListFragment extends Fragment {
 
         gv = (GlobalVariables) getActivity().getApplication();
 
-        buildingNames.clear();
-        buildingNames.add("Culc");
-        buildingNames.add("Student Center");
-        buildingNames.add("Library");
-        buildingNames.add("CRC");
-        buildingNames.add("Klaus");
-        buildingNames.add("CoC");
+//        buildingNames.clear();
+//        for (Map.Entry<String, String> entry : bldgmap.entrySet())
+//        {
+//            buildingNames.add(entry.getKey());
+//        }
+//        buildingNames.add("Culc");
+//        buildingNames.add("Student Center");
+//        buildingNames.add("Library");
+//        buildingNames.add("CRC");
+//        buildingNames.add("Klaus");
+//        buildingNames.add("CoC");
 
         c = Calendar.getInstance();
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 //        Toast.makeText(getActivity().getApplicationContext(), dayOfWeek, Toast.LENGTH_LONG).show();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
-
 
         Spinner timeSpinner = (Spinner) getActivity().findViewById(R.id.time_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
@@ -193,12 +228,14 @@ public class BuildingListFragment extends Fragment {
                 view = getActivity().getLayoutInflater().inflate(R.layout.listview_item, parent, false);
 
             String buildingName = buildingNames.get(position);
-
+//            Log.d("NAMES", buildingName);
             name = (TextView) view.findViewById(R.id.buildingName);
-            name.setText(buildingName);
+            name.setText(bldgnames.get(buildingName));
+            Log.d("MAPPING", bldgnames.get(buildingName));
 
-            rand = new Random();
-            int percent = rand.nextInt(41) + 40;
+
+//            rand = new Random();
+            int percent = Integer.parseInt(bldgbusyness.get(buildingName));
             busyness = (TextView) view.findViewById(R.id.busyness);
             busyness.setText(Integer.toString(percent) + "%");
             progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
@@ -210,5 +247,152 @@ public class BuildingListFragment extends Fragment {
             return view;
         }
     }
+
+    class Wrapper
+    {
+        public int numOfParams;
+        public String result;
+    }
+
+    public class Busyness extends AsyncTask<String, String, Wrapper> {
+        public String test = "123";
+        @Override
+        protected Wrapper doInBackground(String... params) {
+            String urlString = params[0]; // URL to call
+            InputStream in = null;
+            // HTTP Get
+            int paramLength = params.length; //storing [0] url, [1] id [2,3]starttime/endtime
+            if (paramLength == 3 || paramLength >=5) {
+                Log.d("ERROR", "params length error");
+            }
+            if (paramLength ==2) {
+                urlString = urlString + "/" + params[1];
+                Log.d("URL", urlString);
+            }
+            if (paramLength ==4) {
+                urlString = urlString + "/busyness/" + params[2] + "/" + params[3];
+                Log.d("URL", urlString);
+            }
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                in = new BufferedInputStream(urlConnection.getInputStream());
+            } catch (Exception e ) {
+                Log.d("ERROR", e.getMessage());
+            }
+            String result = convertStreamToString(in);
+
+            Log.d("API", result);
+            Wrapper w = new Wrapper();
+            w.numOfParams = paramLength;
+            w.result = result;
+            return w;
+        }
+
+        private void getLocations(String response) {
+            //parse json
+            try {
+                JSONObject js = new JSONObject(response);
+                JSONArray bldgs = js.getJSONArray("locations");
+                for(int i = 0 ; i < bldgs.length() ; i++){
+                    JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
+                    String name = bldgs.getJSONObject(i).getString("name");
+                    String id = bldgs.getJSONObject(i).getString("id");
+                    JSONObject geo = bldgs.getJSONObject(i).getJSONObject("geocode");
+                    bldgnames.put(id, name);
+                    String value = keys.toString();
+                    String[]tokens = value.split(":");
+                    String percent = tokens[tokens.length-1];
+                    bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+                    bldglocs.put(id, geo.toString());
+                    Log.d("JSON", "key =" + id + "name" + name);
+                    Log.d("JSON", "key =" + id + "geo" + geo.toString());
+                    Log.d("JSON", "key =" + id + "busyness" + percent);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void getBusynessNow(String response) {
+            //parse json
+            try {
+                JSONObject js = new JSONObject(response);
+                JSONArray bldgs = js.getJSONArray("locations");
+                for(int i = 0 ; i < bldgs.length() ; i++){
+                    JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
+                    String id = bldgs.getJSONObject(i).getString("id");
+                    String value = keys.toString();
+                    String[]tokens = value.split(":");
+                    String percent = tokens[tokens.length-1];
+                    bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+                    Log.d("JSON", "key =" + id + "busyness" + percent);
+                }
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private void getBusynessAtTime(String response) {
+            //parse json
+            try {
+                JSONObject js = new JSONObject(response);
+
+                for(int i = 0; i<js.names().length(); i++){
+                    String ts = js.names().getString(i);
+                    String bs = js.get(ts).toString();
+                    busynessTemp.put(ts, bs);
+                    Log.d("JSON", ts+", "+bs);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private String convertStreamToString(InputStream is) {
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+
+            String line = null;
+            try {
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return sb.toString();
+        }
+
+        protected void onPostExecute(Wrapper w) {
+//            Intent intent = new Intent(getApplicationContext(), BuildingListFragment.class);
+//
+//            intent.putExtra(EXTRA_MESSAGE, result);
+//
+//            startActivity(intent);
+//            testPrint.setText(result);
+
+            if (w.numOfParams == 1)   getLocations(w.result);
+            if (w.numOfParams == 2)   getBusynessNow(w.result);
+            if (w.numOfParams == 4)   getBusynessAtTime(w.result);
+            buildingNames.clear();
+            for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
+            {
+                Log.d("MAPPING", bldgnames.get(entry.getKey()));
+                buildingNames.add(entry.getKey());
+            }
+
+        }
+    }
+
 
 }

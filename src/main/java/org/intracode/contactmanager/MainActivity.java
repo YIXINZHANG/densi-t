@@ -1,15 +1,33 @@
 package org.intracode.contactmanager;
 
+import android.content.Intent;
+import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
 
+import org.apache.http.HttpEntity;
+import org.apache.http.HttpResponse;
+import org.apache.http.client.ClientProtocolException;
+import org.apache.http.client.HttpClient;
+import org.apache.http.client.methods.HttpGet;
+import org.apache.http.impl.client.DefaultHttpClient;
+import org.json.JSONObject;
+
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.util.ArrayList;
 import java.util.List;
 
@@ -38,10 +56,15 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     private String[] tabs = {"Building", "Busyness", "Map"};
 
+    private String API = "http://densit-api.appspot.com/locations";
+
+    public final static String EXTRA_MESSAGE = "API.MESSAGE";
+
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
 
 
         viewPager = (ViewPager) findViewById(R.id.container);
@@ -114,4 +137,55 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         mapFragment.reload(position);
 
     }
+
+//    private class Busyness extends AsyncTask<String, String, String> {
+//
+//
+//        @Override
+//        protected String doInBackground(String... params) {
+//            String urlString = API; // URL to call
+//            InputStream in = null;
+//            // HTTP Get
+//            try {
+//                URL url = new URL(urlString);
+//                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                in = new BufferedInputStream(urlConnection.getInputStream());
+//            } catch (Exception e ) {
+//                return e.getMessage();
+//            }
+//            String result = convertStreamToString(in);
+//            Log.d("API", result);
+//            return result;
+//        }
+//
+//        private String convertStreamToString(InputStream is) {
+//
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//            StringBuilder sb = new StringBuilder();
+//
+//            String line = null;
+//            try {
+//                while ((line = reader.readLine()) != null) {
+//                    sb.append(line + "\n");
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                try {
+//                    is.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            return sb.toString();
+//        }
+//
+//        protected void onPostExecute(String result) {
+//            Intent intent = new Intent(getApplicationContext(), BuildingListFragment.class);
+//
+//            intent.putExtra(EXTRA_MESSAGE, result);
+//
+//            startActivity(intent);
+//        }
+//    }
 }

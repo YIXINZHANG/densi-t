@@ -91,7 +91,6 @@ public class MapFragment extends Fragment {
 //        minute = c.get(Calendar.MINUTE);
 
         parentActivity = getActivity();
-
         buildingNames.add("Culc");
         positions.add(new LatLng(33.774599, -84.396372));
 

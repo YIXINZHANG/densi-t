@@ -109,8 +109,8 @@ public class BuildingListFragment extends Fragment {
         params[3] = Long.toString(System.currentTimeMillis() / 1000L);
         Log.d("TIME", params[3]);
         Busyness busy = new Busyness();
-//        busy.execute(API);
-        busy.execute(params);//TESTING
+        busy.execute(API);
+//        busy.execute(params);//TESTING
 
     }
 
@@ -138,57 +138,57 @@ public class BuildingListFragment extends Fragment {
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
 
-        Spinner timeSpinner = (Spinner) getActivity().findViewById(R.id.time_spinner);
-            // Create an ArrayAdapter using the string array and a default spinner layout
-            ArrayAdapter<CharSequence> adapters = ArrayAdapter.createFromResource(getActivity(), R.array.time_array, android.R.layout.simple_spinner_item);
-            // Specify the layout to use when the list of choices appears
-            adapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-            // Apply the adapter to the spinner
-            timeSpinner.setAdapter(adapters);
-            timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-                @Override
-                public void onItemSelected(AdapterView<?> parent, View view,
-                                           int position, long id) {
-                    // TODO Auto-generated method stub
-
-                    adapter.notifyDataSetChanged();
-                }
-
-                @Override
-                public void onNothingSelected(AdapterView<?> parent) {
-                    // TODO Auto-generated method stub
-
-                }
-            });
-
-        Spinner dateSpinner = (Spinner) getActivity().findViewById(R.id.date_spinner);
-        // Create an ArrayAdapter using the string array and a default spinner layout
-        ArrayAdapter<CharSequence> dayAdapters = ArrayAdapter.createFromResource(getActivity(), R.array.day_array, android.R.layout.simple_spinner_item);
-        // Specify the layout to use when the list of choices appears
-        dayAdapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-        // Apply the adapter to the spinner
-        dateSpinner.setAdapter(dayAdapters);
-        dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-
-            @Override
-            public void onItemSelected(AdapterView<?> parent, View view,
-                                       int position, long id) {
-                // TODO Auto-generated method stub
-
-                adapter.notifyDataSetChanged();
-            }
-
-            @Override
-            public void onNothingSelected(AdapterView<?> parent) {
-                // TODO Auto-generated method stub
-
-            }
-        });
-//        int position = hour/2;
-        timeSpinner.setSelection(position);
+//        Spinner timeSpinner = (Spinner) getActivity().findViewById(R.id.time_spinner);
+//            // Create an ArrayAdapter using the string array and a default spinner layout
+//            ArrayAdapter<CharSequence> adapters = ArrayAdapter.createFromResource(getActivity(), R.array.time_array, android.R.layout.simple_spinner_item);
+//            // Specify the layout to use when the list of choices appears
+//            adapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//            // Apply the adapter to the spinner
+//            timeSpinner.setAdapter(adapters);
+//            timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//
+//                @Override
+//                public void onItemSelected(AdapterView<?> parent, View view,
+//                                           int position, long id) {
+//                    // TODO Auto-generated method stub
+//
+//                    adapter.notifyDataSetChanged();
+//                }
+//
+//                @Override
+//                public void onNothingSelected(AdapterView<?> parent) {
+//                    // TODO Auto-generated method stub
+//
+//                }
+//            });
+//
+//        Spinner dateSpinner = (Spinner) getActivity().findViewById(R.id.date_spinner);
+//        // Create an ArrayAdapter using the string array and a default spinner layout
+//        ArrayAdapter<CharSequence> dayAdapters = ArrayAdapter.createFromResource(getActivity(), R.array.day_array, android.R.layout.simple_spinner_item);
+//        // Specify the layout to use when the list of choices appears
+//        dayAdapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
+//        // Apply the adapter to the spinner
+//        dateSpinner.setAdapter(dayAdapters);
+//        dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
+//
+//            @Override
+//            public void onItemSelected(AdapterView<?> parent, View view,
+//                                       int position, long id) {
+//                // TODO Auto-generated method stub
+//
+//                adapter.notifyDataSetChanged();
+//            }
+//
+//            @Override
+//            public void onNothingSelected(AdapterView<?> parent) {
+//                // TODO Auto-generated method stub
+//
+//            }
+//        });
+////        int position = hour/2;
+//        timeSpinner.setSelection(position);
         displayListView();
-
+//
         }
 
     @Override
@@ -212,10 +212,11 @@ public class BuildingListFragment extends Fragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
                 ///////////////////////////////////////////////////////////////////////////
-                String name = "Something"; // please add the name of building
-                String id = "ID"; // add the ID
+                String id = buildingNames.get(position);
+                String name = bldgnames.get(id); // please add the name of building
                 ///////////////////////////////////////////////////////////////////////////
                 mCallback.onArticleSelected(position, id, name);
+                Log.d("POS", name);
                 actionBar.setSelectedNavigationItem(1);
 
 
@@ -301,19 +302,37 @@ public class BuildingListFragment extends Fragment {
                 JSONObject js = new JSONObject(response);
                 JSONArray bldgs = js.getJSONArray("locations");
                 for(int i = 0 ; i < bldgs.length() ; i++){
-                    JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
+                    String value = "0";
                     String name = bldgs.getJSONObject(i).getString("name");
                     String id = bldgs.getJSONObject(i).getString("id");
                     JSONObject geo = bldgs.getJSONObject(i).getJSONObject("geocode");
-                    bldgnames.put(id, name);
-                    String value = keys.toString();
-                    String[]tokens = value.split(":");
-                    String percent = tokens[tokens.length-1];
-                    bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+                    if (bldgs.getJSONObject(i).has("busyness")) {
+                        JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
+                        value = keys.toString();
+
+
+                        bldgnames.put(id, name);
+//                        value = keys.toString();
+                        String[]tokens = value.split(":");
+                        String percent = tokens[tokens.length-1];
+                        Log.d("JSON", "key =" + id + "busyness" + percent);
+                        bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+                    } else {
+                        bldgnames.put(id, name);
+                        bldgbusyness.put(id, "0");
+                    }
+//                    String name = bldgs.getJSONObject(i).getString("name");
+//                    String id = bldgs.getJSONObject(i).getString("id");
+//                    JSONObject geo = bldgs.getJSONObject(i).getJSONObject("geocode");
+//                    bldgnames.put(id, name);
+//                    String value = keys.toString();
+//                    String[]tokens = value.split(":");
+//                    String percent = tokens[tokens.length-1];
+//                    bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
                     bldglocs.put(id, geo.toString());
                     Log.d("JSON", "key =" + id + "name" + name);
                     Log.d("JSON", "key =" + id + "geo" + geo.toString());
-                    Log.d("JSON", "key =" + id + "busyness" + percent);
+
                 }
 
             } catch (JSONException e) {

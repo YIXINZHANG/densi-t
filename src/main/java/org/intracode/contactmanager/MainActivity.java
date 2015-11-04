@@ -123,7 +123,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
         busynessFragment.reload(position, id, name);
         MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
-        mapFragment.reload(position, id, name);
+//        mapFragment.reload(position, id, name);
 
 
     }

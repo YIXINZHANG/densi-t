@@ -20,9 +20,9 @@
         <item>10:00-12:00pm</item>
     </string-array>
     <string-array name="buildings_array">
-        <item>Culc</item>
-        <item>Student Center</item>
+        <item>Howey</item>
         <item>Library</item>
+        <item>Student Center</item>
         <item>CRC</item>
         <item>Klaus</item>
         <item>CoC</item>
@@ -52,6 +52,11 @@
         <item>1st floor</item>
         <item>2nd floor</item>
         <item>3rd floor</item>
+    </string-array>
+    <string-array name="howey_array">
+        <item>L2</item>
+        <item>L1</item>
+        <item>L3</item>
     </string-array>
     <string-array name="library_array">
         <item>1st floor</item>

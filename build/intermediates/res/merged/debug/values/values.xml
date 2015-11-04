@@ -3,9 +3,9 @@
     <!-- From: file:/Users/yixin/densi-t/src/main/res/values/strings.xml -->
     <eat-comment/>
     <string-array name="buildings_array">
-        <item>Culc</item>
-        <item>Student Center</item>
+        <item>Howey</item>
         <item>Library</item>
+        <item>Student Center</item>
         <item>CRC</item>
         <item>Klaus</item>
         <item>CoC</item>
@@ -35,6 +35,11 @@
         <item>Friday</item>
         <item>Saturday</item>
         <item>Sunday</item>
+    </string-array>
+    <string-array name="howey_array">
+        <item>L2</item>
+        <item>L1</item>
+        <item>L3</item>
     </string-array>
     <string-array name="klaus_array">
         <item>1st floor</item>

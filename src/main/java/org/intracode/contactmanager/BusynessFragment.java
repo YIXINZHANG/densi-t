@@ -246,7 +246,7 @@ public class BusynessFragment extends Fragment {
             String buildingName = hours.get(position);
             Log.d("NAME", buildingName + " " + busynessTemp.get(buildingName));
             hour = (TextView) view.findViewById(R.id.hours);
-            hour.setText(buildingName);
+            hour.setText(hourPoints[position]);
             busyness = (TextView) view.findViewById(R.id.busynessHours);
 //            rand = new Random();
             String percent = busynessTemp.get(hours.get(position));

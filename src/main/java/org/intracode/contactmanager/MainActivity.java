@@ -1,6 +1,7 @@
 package org.intracode.contactmanager;
 
 import android.content.Intent;
+import android.content.SharedPreferences;
 import android.os.AsyncTask;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
@@ -12,6 +13,7 @@ import android.view.View;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
 import android.widget.Spinner;
+import android.widget.Toast;
 
 import org.apache.http.HttpEntity;
 import org.apache.http.HttpResponse;
@@ -60,10 +62,27 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     public final static String EXTRA_MESSAGE = "API.MESSAGE";
 
+    public static final String PREFS_NAME = "MyPrefsFile";
+
+    private String favoriteList = "favorite";
+    private boolean dummySetting;
+    private int clickedPosition;
+
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
+
+
+
+        //Adding preferences
+        ////////////////////////////////////////////////////////////////////////
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        dummySetting = settings.getBoolean(favoriteList, false);
+        clickedPosition = settings.getInt("clicked", 0);
+        String a = dummySetting + " " + clickedPosition;
+        Toast.makeText(this, a, Toast.LENGTH_LONG).show();
+        ////////////////////////////////////////////////////////////////////////
 
 
 
@@ -123,6 +142,9 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
         busynessFragment.reload(position, id, name);
         MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
+
+        dummySetting = true;
+        clickedPosition = position;
 //        mapFragment.reload(position, id, name);
 
 
@@ -138,54 +160,19 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-//    private class Busyness extends AsyncTask<String, String, String> {
-//
-//
-//        @Override
-//        protected String doInBackground(String... params) {
-//            String urlString = API; // URL to call
-//            InputStream in = null;
-//            // HTTP Get
-//            try {
-//                URL url = new URL(urlString);
-//                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-//                in = new BufferedInputStream(urlConnection.getInputStream());
-//            } catch (Exception e ) {
-//                return e.getMessage();
-//            }
-//            String result = convertStreamToString(in);
-//            Log.d("API", result);
-//            return result;
-//        }
-//
-//        private String convertStreamToString(InputStream is) {
-//
-//            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-//            StringBuilder sb = new StringBuilder();
-//
-//            String line = null;
-//            try {
-//                while ((line = reader.readLine()) != null) {
-//                    sb.append(line + "\n");
-//                }
-//            } catch (IOException e) {
-//                e.printStackTrace();
-//            } finally {
-//                try {
-//                    is.close();
-//                } catch (IOException e) {
-//                    e.printStackTrace();
-//                }
-//            }
-//            return sb.toString();
-//        }
-//
-//        protected void onPostExecute(String result) {
-//            Intent intent = new Intent(getApplicationContext(), BuildingListFragment.class);
-//
-//            intent.putExtra(EXTRA_MESSAGE, result);
-//
-//            startActivity(intent);
-//        }
-//    }
+    @Override
+    protected void onStop(){
+        super.onStop();
+
+        // We need an Editor object to make preference changes.
+        // All objects are from android.context.Context
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(favoriteList, dummySetting);
+        editor.putInt("clicked", clickedPosition);
+
+        // Commit the edits!
+        editor.commit();
+    }
+
 }

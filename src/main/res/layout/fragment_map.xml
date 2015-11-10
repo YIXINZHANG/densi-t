@@ -7,8 +7,42 @@
 
     <com.google.android.gms.maps.MapView android:id="@+id/mapView"
         android:layout_width="fill_parent"
-        android:layout_height="fill_parent"
+        android:layout_height="0dp"
         android:clickable="true"
-        android:layout_weight="9"/>
+        android:layout_weight="10"/>
+
+    <LinearLayout
+        android:layout_width="fill_parent"
+        android:layout_height="0dp"
+        android:layout_weight="1"
+        android:orientation="horizontal">
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/buttonFood"
+            android:layout_gravity="right"
+            android:layout_weight="9" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/buttonStudy"
+            android:layout_gravity="center_horizontal"
+            android:layout_weight="9" />
+
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="New Button"
+            android:id="@+id/buttonRec"
+            android:layout_weight="9" />
+    </LinearLayout>
+
+
 
 </LinearLayout>

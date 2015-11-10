@@ -133,9 +133,12 @@ public class MapFragment extends Fragment {
         for (int i=0; i < positions.size(); i++) {
 //            map.addMarker(new MarkerOptions().position(positions.get(i))
 //                            .title(buildingNames.get(i)));
-
-            Marker md = map.addMarker(new MarkerOptions().position(positions.get(i))
-                            .title(buildingNames.get(i)));
+            ////
+            ///
+            Marker md = map.addMarker(new MarkerOptions()
+                    .position(positions.get(i))
+                    .title(buildingNames.get(i))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business))); // changing ICON
         }
         map.setOnInfoWindowClickListener(new WindowHandler());
         return fragment;

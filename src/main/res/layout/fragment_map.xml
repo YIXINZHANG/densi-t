@@ -20,7 +20,15 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="ALL"
+            android:id="@+id/buttonAll"
+            android:layout_gravity="right"
+            android:layout_weight="9" />
+        <Button
+            style="?android:attr/buttonStyleSmall"
+            android:layout_width="wrap_content"
+            android:layout_height="wrap_content"
+            android:text="Food"
             android:id="@+id/buttonFood"
             android:layout_gravity="right"
             android:layout_weight="9" />
@@ -29,7 +37,7 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="Study"
             android:id="@+id/buttonStudy"
             android:layout_gravity="center_horizontal"
             android:layout_weight="9" />
@@ -38,7 +46,7 @@
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
-            android:text="New Button"
+            android:text="Rec"
             android:id="@+id/buttonRec"
             android:layout_weight="9" />
     </LinearLayout>

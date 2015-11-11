@@ -15,6 +15,7 @@ import android.support.v7.app.ActionBarActivity;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
+import android.widget.Button;
 import android.widget.SearchView;
 
 import com.google.android.gms.maps.CameraUpdate;
@@ -51,6 +52,7 @@ public class MapFragment extends Fragment {
     private CameraUpdate cameraUpdate;
     private Calendar c;
     private ActionBar actionBar;
+    private Button allButton, foodButton, studyButton, recButton;
 
 
     private ArrayList<String> buildingNames = new ArrayList<String>();
@@ -109,25 +111,58 @@ public class MapFragment extends Fragment {
         buildingNames.add("CoC");
         positions.add(new LatLng(33.777386,-84.39738));
 
-        final LocationManager lm = (LocationManager) parentActivity.getSystemService( Context.LOCATION_SERVICE );
-        Criteria c = new Criteria();
-        String provider = lm.getBestProvider(c, false);
-        cLocation = lm.getLastKnownLocation(provider);
-        if (cLocation != null) {
-            pLong = cLocation.getLongitude();
-            pLat = cLocation.getLatitude();
-        }
-        currentLocation = new LatLng(pLat, pLong);
+        allButton = (Button) fragment.findViewById(R.id.buttonAll);
+        foodButton = (Button) fragment.findViewById(R.id.buttonFood);
+        studyButton = (Button) fragment.findViewById(R.id.buttonStudy);
+        recButton = (Button) fragment.findViewById(R.id.buttonRec);
+
+        allButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateAllView();
+
+            }
+        });
+        foodButton.setOnClickListener(new View.OnClickListener() {
+            @Override
+            public void onClick(View view) {
+                updateFoodView();
+
+            }
+        });
+        studyButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                updateStudyView();
+            }
+        });
+        recButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                // TODO Auto-generated method stub
+                updateRecView();
+            }
+        });
 
         MapsInitializer.initialize(parentActivity.getApplicationContext());
         map = mapView.getMap();
         map.getUiSettings().setMyLocationButtonEnabled(false);
         map.setMyLocationEnabled(true);
-        Location myLocation = map.getMyLocation();
-        currentLocation = new LatLng(33.775618, -84.396285);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        cameraUpdate = CameraUpdateFactory.newLatLngZoom(currentLocation, 15.0f);
+        ArrayList<Double> lat = new ArrayList<Double>();
+        ArrayList<Double> lon = new ArrayList<Double>();
+        for (int i=0; i < positions.size(); i++) {
+            lat.add(positions.get(i).latitude);
+            lon.add(positions.get(i).longitude);
+        }
+        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
+        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
+        LatLng newPosition = new LatLng(newLat,newLon);
+        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, 15.5f);
         map.animateCamera(cameraUpdate);
 
         for (int i=0; i < positions.size(); i++) {
@@ -203,5 +238,121 @@ public class MapFragment extends Fragment {
             actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
             actionBar.setSelectedNavigationItem(1);
         }
+    }
+
+
+    public void updateAllView() {
+        map.clear();
+        ArrayList<Double> lat = new ArrayList<Double>();
+        ArrayList<Double> lon = new ArrayList<Double>();
+
+        for (int i=0; i < positions.size(); i++) {
+            lat.add(positions.get(i).latitude);
+            lon.add(positions.get(i).longitude);
+
+            map.addMarker(new MarkerOptions()
+                    .position(positions.get(i))
+                    .title(buildingNames.get(i))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+        }
+        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
+        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
+        double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
+        double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
+        LatLng newPosition = new LatLng(newLat,newLon);
+        float zoom;
+        if (maxLat > maxLon) {
+            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
+        } else {
+            zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
+        }
+        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
+        map.animateCamera(cameraUpdate);
+    }
+
+
+    //Update study area
+    public void updateStudyView() {
+        map.clear();
+        ArrayList<Double> lat = new ArrayList<Double>();
+        ArrayList<Double> lon = new ArrayList<Double>();
+        for (int i=0; i < 2; i++) {
+            lat.add(positions.get(i).latitude);
+            lon.add(positions.get(i).longitude);
+            map.addMarker(new MarkerOptions()
+                    .position(positions.get(i))
+                    .title(buildingNames.get(i))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+        }
+        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
+        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
+        double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
+        double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
+        LatLng newPosition = new LatLng(newLat,newLon);
+        float zoom;
+        if (maxLat > maxLon) {
+            System.out.println("Max " + maxLat);
+            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
+        } else {
+            zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
+        }
+        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
+        map.animateCamera(cameraUpdate);
+    }
+
+    //Update food Area
+    public void updateFoodView() {
+        map.clear();
+        ArrayList<Double> lat = new ArrayList<Double>();
+        ArrayList<Double> lon = new ArrayList<Double>();
+        for (int i=2; i < 4; i++) {
+            lat.add(positions.get(i).latitude);
+            lon.add(positions.get(i).longitude);
+            map.addMarker(new MarkerOptions()
+                    .position(positions.get(i))
+                    .title(buildingNames.get(i))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+        }
+        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
+        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
+        double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
+        double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
+        LatLng newPosition = new LatLng(newLat,newLon);
+        float zoom;
+        if (maxLat > maxLon) {
+            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
+        } else {
+            zoom = (float) (15.5 + (1 - (maxLon - 0.001099) / 0.006829) * 2);
+        }
+        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
+        map.animateCamera(cameraUpdate);
+    }
+
+    //Update Recreation Area
+    public void updateRecView() {
+        map.clear();
+        ArrayList<Double> lat = new ArrayList<Double>();
+        ArrayList<Double> lon = new ArrayList<Double>();
+        for (int i=4; i < 6; i++) {
+            lat.add(positions.get(i).latitude);
+            lon.add(positions.get(i).longitude);
+            map.addMarker(new MarkerOptions()
+                    .position(positions.get(i))
+                    .title(buildingNames.get(i))
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+        }
+        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
+        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
+        double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
+        double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
+        LatLng newPosition = new LatLng(newLat,newLon);
+        float zoom;
+        if (maxLat > maxLon) {
+            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
+        } else {
+            zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
+        }
+        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
+        map.animateCamera(cameraUpdate);
     }
 }

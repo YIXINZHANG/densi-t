@@ -173,7 +173,7 @@ public class MapFragment extends Fragment {
             Marker md = map.addMarker(new MarkerOptions()
                     .position(positions.get(i))
                     .title(buildingNames.get(i))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business))); // changing ICON
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.busyness))); // changing ICON
         }
         map.setOnInfoWindowClickListener(new WindowHandler());
         return fragment;
@@ -253,7 +253,7 @@ public class MapFragment extends Fragment {
             map.addMarker(new MarkerOptions()
                     .position(positions.get(i))
                     .title(buildingNames.get(i))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.busyness)));
         }
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;
         double newLon = (Collections.max(lon) + Collections.min(lon))/2;
@@ -282,7 +282,7 @@ public class MapFragment extends Fragment {
             map.addMarker(new MarkerOptions()
                     .position(positions.get(i))
                     .title(buildingNames.get(i))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.busyness)));
         }
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;
         double newLon = (Collections.max(lon) + Collections.min(lon))/2;
@@ -311,7 +311,7 @@ public class MapFragment extends Fragment {
             map.addMarker(new MarkerOptions()
                     .position(positions.get(i))
                     .title(buildingNames.get(i))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.busyness)));
         }
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;
         double newLon = (Collections.max(lon) + Collections.min(lon))/2;
@@ -339,7 +339,7 @@ public class MapFragment extends Fragment {
             map.addMarker(new MarkerOptions()
                     .position(positions.get(i))
                     .title(buildingNames.get(i))
-                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.business)));
+                    .icon(BitmapDescriptorFactory.fromResource(R.drawable.busyness)));
         }
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;
         double newLon = (Collections.max(lon) + Collections.min(lon))/2;

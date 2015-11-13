@@ -74,7 +74,7 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         dummySetting = settings.getBoolean(favoriteList, false);
         clickedPosition = settings.getInt("clicked", 0);
         String a = dummySetting + " " + clickedPosition;
-        Toast.makeText(this, a, Toast.LENGTH_LONG).show();
+//        Toast.makeText(this, a, Toast.LENGTH_LONG).show();
         ////////////////////////////////////////////////////////////////////////
 
 

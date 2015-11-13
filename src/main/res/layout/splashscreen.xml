@@ -2,14 +2,9 @@
 
 <ScrollView xmlns:android="http://schemas.android.com/apk/res/android"
     android:layout_width="fill_parent"
-    android:layout_height="fill_parent"
+    android:layout_height="600dp"
     android:layout_gravity="bottom"
-    android:fillViewport="true" >
-
-    <RelativeLayout
-        android:layout_width="fill_parent"
-        android:layout_height="wrap_content"
-        android:background="@drawable/splash" >
-    </RelativeLayout>
+    android:fillViewport="true"
+    android:background="@drawable/splash">
 
 </ScrollView>

@@ -102,14 +102,14 @@ public class BuildingListFragment extends Fragment {
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-        String[] params = new String[4];
-        params[0] = API;
-        params[1] = "1";
-        params[2] = Long.toString(System.currentTimeMillis() / 1000L);
-        params[3] = Long.toString(System.currentTimeMillis() / 1000L);
-        Log.d("TIME", params[3]);
-        Busyness busy = new Busyness();
-        busy.execute(API);
+//        String[] params = new String[4];
+//        params[0] = API;
+//        params[1] = "1";
+//        params[2] = Long.toString(System.currentTimeMillis() / 1000L);
+//        params[3] = Long.toString(System.currentTimeMillis() / 1000L);
+//        Log.d("TIME", params[3]);
+//        Busyness busy = new Busyness();
+//        busy.execute(API);
 //        busy.execute(params);//TESTING
 
     }
@@ -119,6 +119,18 @@ public class BuildingListFragment extends Fragment {
         super.onActivityCreated(savedInstanceState);
 
         gv = (GlobalVariables) getActivity().getApplication();
+        bldgnames.putAll(gv.getBldgnames());
+        bldglocs.putAll(gv.getBldglocs());
+        bldgbusyness.putAll(gv.getBldgbusyness());
+        busynessTemp.putAll(gv.getBusynessTemp());
+        buildingNames = new ArrayList<String>(gv.getBuildingNames());
+
+        Log.d("2nd", "Here");
+        Log.d("JSON", "Buildings " + bldgnames);
+        Log.d("JSON", "Buildbusyness " + bldgbusyness);
+        Log.d("JSON", "Buildbldglocs " + bldglocs);
+        Log.d("JSON", "Builddmanes " + buildingNames);
+        Log.d("JSON", "BuildTemp " + busynessTemp);
 
 //        buildingNames.clear();
 //        for (Map.Entry<String, String> entry : bldgmap.entrySet())
@@ -212,12 +224,14 @@ public class BuildingListFragment extends Fragment {
             public void onItemClick(AdapterView<?> arg0, View arg1, int position, long arg3) {
                 actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
                 ///////////////////////////////////////////////////////////////////////////
-                String id = buildingNames.get(position);
-                String name = bldgnames.get(id); // please add the name of building
-                ///////////////////////////////////////////////////////////////////////////
-                mCallback.onArticleSelected(position, id, name);
-                Log.d("POS", name);
-                actionBar.setSelectedNavigationItem(1);
+                // ListView onclick listener
+
+//                String id = buildingNames.get(position);
+//                String name = bldgnames.get(id); // please add the name of building
+//                ///////////////////////////////////////////////////////////////////////////
+//                mCallback.onArticleSelected(position, id, name);
+//                Log.d("POS", name);
+//                actionBar.setSelectedNavigationItem(1);
 
 
             }
@@ -255,174 +269,166 @@ public class BuildingListFragment extends Fragment {
         }
     }
 
-    class Wrapper
-    {
-        public int numOfParams;
-        public String result;
-    }
-
-    public class Busyness extends AsyncTask<String, String, Wrapper> {
-        public String test = "123";
-        @Override
-        protected Wrapper doInBackground(String... params) {
-            String urlString = params[0]; // URL to call
-            InputStream in = null;
-            // HTTP Get
-            int paramLength = params.length; //storing [0] url, [1] id [2,3]starttime/endtime
-            if (paramLength == 3 || paramLength >=5) {
-                Log.d("ERROR", "params length error");
-            }
-            if (paramLength >=2) {
-                urlString = urlString + "/" + params[1];
-                Log.d("URL", urlString);
-            }
-            if (paramLength ==4) {
-                urlString = urlString + "/busyness/" + params[2] + "/" + params[3];
-                Log.d("URL", urlString);
-            }
-            try {
-                URL url = new URL(urlString);
-                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
-                in = new BufferedInputStream(urlConnection.getInputStream());
-            } catch (Exception e ) {
-                Log.d("ERROR", e.getMessage());
-            }
-            String result = convertStreamToString(in);
-
-            Log.d("API", result);
-            Wrapper w = new Wrapper();
-            w.numOfParams = paramLength;
-            w.result = result;
-            return w;
-        }
-
-        private void getLocations(String response) {
-            //parse json
-            try {
-                JSONObject js = new JSONObject(response);
-                JSONArray bldgs = js.getJSONArray("locations");
-                for(int i = 0 ; i < bldgs.length() ; i++){
-                    String value = "0";
-                    String name = bldgs.getJSONObject(i).getString("name");
-                    String id = bldgs.getJSONObject(i).getString("id");
-                    JSONObject geo = bldgs.getJSONObject(i).getJSONObject("geocode");
-                    if (bldgs.getJSONObject(i).has("busyness")) {
-                        JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
-                        value = keys.toString();
-
-
-                        bldgnames.put(id, name);
-//                        value = keys.toString();
-                        String[]tokens = value.split(":");
-                        String percent = tokens[tokens.length-1];
-                        Log.d("JSON", "key =" + id + "busyness" + percent);
-                        bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
-                    } else {
-                        bldgnames.put(id, name);
-                        bldgbusyness.put(id, "0");
-                    }
+//    class Wrapper
+//    {
+//        public int numOfParams;
+//        public String result;
+//    }
+//
+//    public class Busyness extends AsyncTask<String, String, Wrapper> {
+//        public String test = "123";
+//        @Override
+//        protected Wrapper doInBackground(String... params) {
+//            String urlString = params[0]; // URL to call
+//            InputStream in = null;
+//            // HTTP Get
+//            int paramLength = params.length; //storing [0] url, [1] id [2,3]starttime/endtime
+//            if (paramLength == 3 || paramLength >=5) {
+//                Log.d("ERROR", "params length error");
+//            }
+//            if (paramLength >=2) {
+//                urlString = urlString + "/" + params[1];
+//                Log.d("URL", urlString);
+//            }
+//            if (paramLength ==4) {
+//                urlString = urlString + "/busyness/" + params[2] + "/" + params[3];
+//                Log.d("URL", urlString);
+//            }
+//            try {
+//                URL url = new URL(urlString);
+//                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+//                in = new BufferedInputStream(urlConnection.getInputStream());
+//            } catch (Exception e ) {
+//                Log.d("ERROR", e.getMessage());
+//            }
+//            String result = convertStreamToString(in);
+//
+//            Log.d("API", result);
+//            Wrapper w = new Wrapper();
+//            w.numOfParams = paramLength;
+//            w.result = result;
+//            return w;
+//        }
+//
+//        private void getLocations(String response) {
+//            //parse json
+//            try {
+//                JSONObject js = new JSONObject(response);
+//                JSONArray bldgs = js.getJSONArray("locations");
+//                for(int i = 0 ; i < bldgs.length() ; i++){
+//                    String value = "0";
 //                    String name = bldgs.getJSONObject(i).getString("name");
 //                    String id = bldgs.getJSONObject(i).getString("id");
 //                    JSONObject geo = bldgs.getJSONObject(i).getJSONObject("geocode");
-//                    bldgnames.put(id, name);
-//                    String value = keys.toString();
-//                    String[]tokens = value.split(":");
-//                    String percent = tokens[tokens.length-1];
-//                    bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
-                    bldglocs.put(id, geo.toString());
-                    Log.d("JSON", "key =" + id + "name" + name);
-                    Log.d("JSON", "key =" + id + "geo" + geo.toString());
-
-                }
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void getBusynessNow(String response) {
-            //parse json
-            try {
-                JSONObject js = new JSONObject(response);
-                JSONObject keys = js.getJSONObject("busyness");
-                String id = js.getString("id");
-                String value = keys.toString();
-                String[]tokens = value.split(":");
-                String percent = tokens[tokens.length-1];
-                bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
-                Log.d("JSON", "key =" + id + "busyness" + percent);
-
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private void getBusynessAtTime(String response) {
-            //parse json
-            try {
-                JSONObject js = new JSONObject(response);
-
-                for(int i = 0; i<js.names().length(); i++){
-                    String ts = js.names().getString(i);
-                    String bs = js.get(ts).toString();
-                    busynessTemp.put(ts, bs);
-                    Log.d("JSON", ts+", "+bs);
-                }
-            } catch (JSONException e) {
-                e.printStackTrace();
-            }
-        }
-
-        private String convertStreamToString(InputStream is) {
-
-            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
-            StringBuilder sb = new StringBuilder();
-
-            String line = null;
-            try {
-                while ((line = reader.readLine()) != null) {
-                    sb.append(line + "\n");
-                }
-            } catch (IOException e) {
-                e.printStackTrace();
-            } finally {
-                try {
-                    is.close();
-                } catch (IOException e) {
-                    e.printStackTrace();
-                }
-            }
-            return sb.toString();
-        }
-
-        protected void onPostExecute(Wrapper w) {
-//            Intent intent = new Intent(getApplicationContext(), BuildingListFragment.class);
+//                    if (bldgs.getJSONObject(i).has("busyness")) {
+//                        JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
+//                        value = keys.toString();
 //
-//            intent.putExtra(EXTRA_MESSAGE, result);
 //
-//            startActivity(intent);
-//            testPrint.setText(result);
-
-            if (w.numOfParams == 1)   {
-                getLocations(w.result);
-                buildingNames.clear();
-                for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
-                {
-//                Log.d("MAPPING", bldgnames.get(entry.getKey()));
-                    buildingNames.add(entry.getKey());
-                }
-            }
-            if (w.numOfParams == 2)   getBusynessNow(w.result);
-            if (w.numOfParams == 4)   getBusynessAtTime(w.result);
-//            buildingNames.clear();
-//            for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
-//            {
-////                Log.d("MAPPING", bldgnames.get(entry.getKey()));
-//                buildingNames.add(entry.getKey());
+//                        bldgnames.put(id, name);
+//
+//                        String[]tokens = value.split(":");
+//                        String percent = tokens[tokens.length-1];
+//                        Log.d("JSON", "key =" + id + "busyness" + percent);
+//                        bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+//                    } else {
+//                        bldgnames.put(id, name);
+//                        bldgbusyness.put(id, "0");
+//                    }
+//                    bldglocs.put(id, geo.toString());
+//                    Log.d("JSON", "key =" + id + "name" + name);
+//                    Log.d("JSON", "key =" + id + "geo" + geo.toString());
+//
+//                }
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
 //            }
-
-        }
-    }
+//        }
+//
+//        private void getBusynessNow(String response) {
+//            //parse json
+//            try {
+//                JSONObject js = new JSONObject(response);
+//                JSONObject keys = js.getJSONObject("busyness");
+//                String id = js.getString("id");
+//                String value = keys.toString();
+//                String[]tokens = value.split(":");
+//                String percent = tokens[tokens.length-1];
+//                bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+//                Log.d("JSON", "key =" + id + "busyness" + percent);
+//
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        private void getBusynessAtTime(String response) {
+//            //parse json
+//            try {
+//                JSONObject js = new JSONObject(response);
+//
+//                for(int i = 0; i<js.names().length(); i++){
+//                    String ts = js.names().getString(i);
+//                    String bs = js.get(ts).toString();
+//                    busynessTemp.put(ts, bs);
+//                    Log.d("JSON", ts+", "+bs);
+//                }
+//            } catch (JSONException e) {
+//                e.printStackTrace();
+//            }
+//        }
+//
+//        private String convertStreamToString(InputStream is) {
+//
+//            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+//            StringBuilder sb = new StringBuilder();
+//
+//            String line = null;
+//            try {
+//                while ((line = reader.readLine()) != null) {
+//                    sb.append(line + "\n");
+//                }
+//            } catch (IOException e) {
+//                e.printStackTrace();
+//            } finally {
+//                try {
+//                    is.close();
+//                } catch (IOException e) {
+//                    e.printStackTrace();
+//                }
+//            }
+//            return sb.toString();
+//        }
+//
+//        protected void onPostExecute(Wrapper w) {
+////            Intent intent = new Intent(getApplicationContext(), BuildingListFragment.class);
+////
+////            intent.putExtra(EXTRA_MESSAGE, result);
+////
+////            startActivity(intent);
+////            testPrint.setText(result);
+//
+//            if (w.numOfParams == 1)   {
+//                getLocations(w.result);
+//                buildingNames.clear();
+//                for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
+//                {
+////                Log.d("MAPPING", bldgnames.get(entry.getKey()));
+//                    buildingNames.add(entry.getKey());
+//                }
+//            }
+//            if (w.numOfParams == 2)   getBusynessNow(w.result);
+//            if (w.numOfParams == 4)   getBusynessAtTime(w.result);
+////            buildingNames.clear();
+////            for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
+////            {
+//////                Log.d("MAPPING", bldgnames.get(entry.getKey()));
+////                buildingNames.add(entry.getKey());
+////            }
+//
+//        }
+//    }
 
 
 }

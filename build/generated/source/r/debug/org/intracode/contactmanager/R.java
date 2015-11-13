@@ -1925,6 +1925,7 @@ containing a value of this type.
         public static final int no_user_logo=0x7f020055;
         public static final int powered_by_google_dark=0x7f020056;
         public static final int powered_by_google_light=0x7f020057;
+        public static final int splash=0x7f020058;
     }
     public static final class id {
         public static final int action_bar=0x7f0e0045;
@@ -2071,7 +2072,8 @@ containing a value of this type.
         public static final int layout_text_round_corner_progress_bar=0x7f04001d;
         public static final int listview_hours=0x7f04001e;
         public static final int listview_item=0x7f04001f;
-        public static final int support_simple_spinner_dropdown_item=0x7f040020;
+        public static final int splashscreen=0x7f040020;
+        public static final int support_simple_spinner_dropdown_item=0x7f040021;
     }
     public static final class menu {
         public static final int main=0x7f0f0000;

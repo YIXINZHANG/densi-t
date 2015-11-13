@@ -44,19 +44,12 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private TabsAdapter mAdapter;
     private ActionBar actionBar;
     private ViewPager viewPager;
-
-    public static List<String> allListInKor;
-    public static List<String> allListInEng;
-    public static List<String> nameListInKor;
-    public static List<String> nameListInEng;
-    public static List<String> menuListInKor;
-
     /**
      * Instance variable for FragmentManager.
      */
     private FragmentManager fragmentManager;
 
-    private String[] tabs = {"Building", "Busyness", "Map"};
+    private String[] tabs = {"Building", "Map"};
 
     private String API = "http://densit-api.appspot.com/locations";
 

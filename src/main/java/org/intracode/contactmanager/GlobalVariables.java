@@ -5,37 +5,66 @@ package org.intracode.contactmanager;
  */
 import android.app.Application;
 import android.provider.Settings;
+import android.util.Log;
 
 import com.google.android.gms.maps.model.Marker;
 
 import java.util.ArrayList;
+import java.util.HashMap;
 import java.util.List;
+import java.util.Map;
 
 
 public class GlobalVariables extends Application {
 
+    private  Map<String, String> bldgnames = new HashMap<String, String>();
+    private  Map<String, String> bldglocs = new HashMap<String, String>();
+    private  Map<String, String> bldgbusyness = new HashMap<String, String>();
+    private  Map<String, String> busynessTemp = new HashMap<String, String>();
     private ArrayList<String> buildingNames = new ArrayList<String>();
-    private ArrayList<Marker> markers = new ArrayList<Marker>();
-    private int selected;
 
     public GlobalVariables() {
-        buildingNames.clear();
-        buildingNames.add("Culc");
-        buildingNames.add("Student Center");
-        buildingNames.add("Library");
-        buildingNames.add("CRC");
-        buildingNames.add("Klaus");
-        buildingNames.add("CoC");
-        selected  = 0;
+
+    }
+    public void addBldgames (Map<String, String> bldgames) {
+        this.bldgnames.putAll(bldgames);
+        System.out.println(this.bldgnames);
     }
 
-    public void setSelected(int i) {
-        System.out.println("set" + i);
-        this.selected = i;
+    public void addBldglocs (Map<String, String> bldglocs) {
+        this.bldglocs.putAll(bldglocs);
     }
 
-    public int getSelected() {
-        return this.selected;
+    public void addBldgbusyness (Map<String, String> bldgbusyness) {
+        this.bldgbusyness.putAll(bldgbusyness);
+    }
+
+    public void addBusynessTemp (Map<String, String> bldgbusyness) {
+        this.bldgbusyness.putAll(bldgbusyness);
+    }
+
+    public void addBuildingNames (ArrayList<String> buildingNames) {
+        this.buildingNames = new ArrayList<String>(buildingNames);
+    }
+
+    public Map<String, String> getBldgnames () {
+        return this.bldgnames;
+    }
+
+    public Map<String, String> getBldgbusyness() {
+        return this.bldgbusyness;
+    }
+
+    public Map<String, String> getBusynessTemp() {
+        return this.busynessTemp;
+    }
+
+    public Map<String, String> getBldglocs() {
+        return this.bldglocs;
+    }
+
+    public ArrayList<String> getBuildingNames() {
+        return this.buildingNames;
     }
 //
 //    public Integer getPercent(Integer i) {

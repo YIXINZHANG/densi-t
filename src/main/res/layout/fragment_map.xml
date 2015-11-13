@@ -16,39 +16,92 @@
         android:layout_height="0dp"
         android:layout_weight="1"
         android:orientation="horizontal">
+
         <Button
             style="?android:attr/buttonStyleSmall"
             android:layout_width="wrap_content"
             android:layout_height="wrap_content"
             android:text="ALL"
             android:id="@+id/buttonAll"
-            android:layout_gravity="right"
-            android:layout_weight="9" />
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Food"
-            android:id="@+id/buttonFood"
-            android:layout_gravity="right"
-            android:layout_weight="9" />
+            android:layout_gravity="left"
+            android:layout_marginLeft="67dp"/>
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Study"
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/buttonStudy"
-            android:layout_gravity="center_horizontal"
-            android:layout_weight="9" />
+            android:background="@drawable/study"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:layout_marginLeft="20dp" />
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="Rec"
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
+            android:id="@+id/buttonFood"
+            android:background="@drawable/food"
+            android:layout_gravity="center"
+            android:scaleType="fitCenter"
+            android:layout_marginLeft="20dp" />
+
+        <ImageButton
+            android:layout_width="30dp"
+            android:layout_height="30dp"
             android:id="@+id/buttonRec"
-            android:layout_weight="9" />
+            android:layout_gravity="center"
+            android:background="@drawable/recreation"
+            android:scaleType="fitCenter"
+            android:layout_marginLeft="20dp" />
+
+        <ImageButton
+            android:layout_width="32dp"
+            android:layout_height="32dp"
+            android:id="@+id/buttonFavorite"
+            android:background="@drawable/favourite"
+            android:maxHeight="32dp"
+            android:maxWidth="32dp"
+            android:minHeight="0dp"
+            android:minWidth="0dp"
+            android:nestedScrollingEnabled="true"
+            android:scaleType="fitCenter"
+            android:layout_gravity="center"
+            android:layout_marginLeft="20dp" />
+
+
+
+        <!--<Button-->
+            <!--style="?android:attr/buttonStyleSmall"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="ALL"-->
+            <!--android:id="@+id/buttonAll"-->
+            <!--android:layout_gravity="right"-->
+            <!--android:layout_weight="9" />-->
+        <!--<Button-->
+            <!--style="?android:attr/buttonStyleSmall"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Food"-->
+            <!--android:id="@+id/buttonFood"-->
+            <!--android:layout_gravity="right"-->
+            <!--android:layout_weight="9" />-->
+
+        <!--<Button-->
+            <!--style="?android:attr/buttonStyleSmall"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Study"-->
+            <!--android:id="@+id/buttonStudy"-->
+            <!--android:layout_gravity="center_horizontal"-->
+            <!--android:layout_weight="9" />-->
+
+        <!--<Button-->
+            <!--style="?android:attr/buttonStyleSmall"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="Rec"-->
+            <!--android:id="@+id/buttonRec"-->
+            <!--android:layout_weight="9" />-->
     </LinearLayout>
 
 

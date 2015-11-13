@@ -66,6 +66,7 @@ public class BuildingListFragment extends Fragment {
     public  Map<String, String> bldgbusyness = new HashMap<String, String>();
     public  Map<String, String> busynessTemp = new HashMap<String, String>();
     public  ArrayList<Building> buildings = new ArrayList<Building>();
+    public  ArrayList<Building> buildingsFinal = new ArrayList<Building>();
     private TextView name;
 //    private TextView testPrint;
 //    private Random rand;
@@ -84,6 +85,7 @@ public class BuildingListFragment extends Fragment {
     private Boolean foo = false;
     private Boolean stu = false;
     private Boolean rec = false;
+    private ImageButton fa, food, study, recreation;
 
     private String API = "http://densit-api.appspot.com/locations";
 
@@ -129,8 +131,8 @@ public class BuildingListFragment extends Fragment {
 
         Building newBuilding1 = new Building("Culc", 33.774599, -84.396372, 39, t1, true, false, true, false);
         Building newBuilding2 = new Building("Student Center", 33.774028, -84.398818, 35, t2, true, true, true, true);
-        Building newBuilding3 = new Building("Library", 33.774327, -84.395825, 31, t3, false, false, true, false);
-        Building newBuilding4 = new Building("CRC", 33.77562, -84.403753, 46, t4, true, true, false, true);
+        Building newBuilding3 = new Building("Library", 33.774327, -84.395825, 31, t3, true, false, true, false);
+        Building newBuilding4 = new Building("CRC", 33.77562, -84.403753, 46, t4, false, true, false, true);
         Building newBuilding5 = new Building("Klaus", 33.777212, -84.396281, 33, t5, false, false, true, false);
         Building newBuilding6 = new Building("CoC", 33.777386, -84.396281, 52, t6, false, true, true, false);
         buildings.add(newBuilding1);
@@ -139,6 +141,8 @@ public class BuildingListFragment extends Fragment {
         buildings.add(newBuilding4);
         buildings.add(newBuilding5);
         buildings.add(newBuilding6);
+        buildingsFinal.addAll(buildings);
+
     }
 
     @Override
@@ -173,6 +177,7 @@ public class BuildingListFragment extends Fragment {
             adapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
             // Apply the adapter to the spinner
             timeSpinner.setAdapter(adapters);
+            timeSpinner.setSelection(hour);
             timeSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
                 @Override
@@ -191,7 +196,7 @@ public class BuildingListFragment extends Fragment {
             });
 
         //filters
-        final ImageButton fa = (ImageButton) getActivity().findViewById(R.id.favourite);
+        fa = (ImageButton) getActivity().findViewById(R.id.favourite);
         fa.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
@@ -199,6 +204,14 @@ public class BuildingListFragment extends Fragment {
                     fav = true;
                     fa.setImageResource(R.drawable.favourite_selected);
                     ViewFav();
+
+                    foo = false;
+                    food.setImageResource(R.drawable.food);
+                    stu = false;
+                    study.setImageResource(R.drawable.study);
+                    ViewFood();
+                    rec = false;
+                    recreation.setImageResource(R.drawable.recreation);
                 } else {
                     fav = false;
                     fa.setImageResource(R.drawable.favourite);
@@ -209,14 +222,23 @@ public class BuildingListFragment extends Fragment {
             }
         });
 
-        final ImageButton food = (ImageButton) getActivity().findViewById(R.id.food);
+        food = (ImageButton) getActivity().findViewById(R.id.food);
         food.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
                 if (!foo){
                     foo = true;
                     food.setImageResource(R.drawable.food_selected);
+
+                    fav = false;
+                    fa.setImageResource(R.drawable.favourite);
+                    stu = false;
+                    study.setImageResource(R.drawable.study);
+                    rec = false;
+                    recreation.setImageResource(R.drawable.recreation);
+
                     ViewFood();
+
                 } else {
                     foo = false;
                     food.setImageResource(R.drawable.food);
@@ -227,17 +249,26 @@ public class BuildingListFragment extends Fragment {
             }
         });
 
-        final ImageButton study = (ImageButton) getActivity().findViewById(R.id.study);
+        study = (ImageButton) getActivity().findViewById(R.id.study);
         study.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!stu){
+                if (!stu) {
                     stu = true;
                     study.setImageResource(R.drawable.study_selected);
+
+                    fav = false;
+                    fa.setImageResource(R.drawable.favourite);
+                    foo = false;
+                    food.setImageResource(R.drawable.food);
+                    rec = false;
+                    recreation.setImageResource(R.drawable.recreation);
                     ViewStudy();
                 } else {
                     stu = false;
                     study.setImageResource(R.drawable.study);
+
+
                     ViewAll();
                 }
                 displayListView();
@@ -245,13 +276,19 @@ public class BuildingListFragment extends Fragment {
             }
         });
 
-        final ImageButton recreation = (ImageButton) getActivity().findViewById(R.id.recreation);
+        recreation = (ImageButton) getActivity().findViewById(R.id.recreation);
         recreation.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View v) {
-                if (!rec){
+                if (!rec) {
                     rec = true;
                     recreation.setImageResource(R.drawable.recreation_selected);
+                    fav = false;
+                    fa.setImageResource(R.drawable.favourite);
+                    foo = false;
+                    food.setImageResource(R.drawable.food);
+                    stu = false;
+                    study.setImageResource(R.drawable.study);
                     ViewRec();
                 } else {
                     rec = false;
@@ -261,32 +298,6 @@ public class BuildingListFragment extends Fragment {
                 displayListView();
             }
         });
-//
-//        Spinner dateSpinner = (Spinner) getActivity().findViewById(R.id.date_spinner);
-//        // Create an ArrayAdapter using the string array and a default spinner layout
-//        ArrayAdapter<CharSequence> dayAdapters = ArrayAdapter.createFromResource(getActivity(), R.array.day_array, android.R.layout.simple_spinner_item);
-//        // Specify the layout to use when the list of choices appears
-//        dayAdapters.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
-//        // Apply the adapter to the spinner
-//        dateSpinner.setAdapter(dayAdapters);
-//        dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
-//
-//            @Override
-//            public void onItemSelected(AdapterView<?> parent, View view,
-//                                       int position, long id) {
-//                // TODO Auto-generated method stub
-//
-//                adapter.notifyDataSetChanged();
-//            }
-//
-//            @Override
-//            public void onNothingSelected(AdapterView<?> parent) {
-//                // TODO Auto-generated method stub
-//
-//            }
-//        });
-////        int position = hour/2;
-//        timeSpinner.setSelection(position);
         ViewAll();
         displayListView();
 //
@@ -305,14 +316,14 @@ public class BuildingListFragment extends Fragment {
 
     private void ViewAll() {
         buildingNames.clear();
-        for (Building b : buildings) {
+        for (Building b : buildingsFinal) {
             buildingNames.add(b.getName());
         }
     }
 
     private void ViewFav() {
         buildingNames.clear();
-        for (Building b : buildings){
+        for (Building b : buildingsFinal){
             if (b.getFavorite()) {
                 Log.d("FAV1", Boolean.toString(b.getFavorite())+","+b.getName());
                 buildingNames.add(b.getName());
@@ -323,7 +334,7 @@ public class BuildingListFragment extends Fragment {
 
     private void ViewFood() {
         buildingNames.clear();
-        for (Building b : buildings){
+        for (Building b : buildingsFinal){
             if (b.getFood()) {
 //                Log.d("FAV1", Boolean.toString(b.getFavorite())+","+b.getName());
                 buildingNames.add(b.getName());
@@ -334,7 +345,7 @@ public class BuildingListFragment extends Fragment {
 
     private void ViewStudy() {
         buildingNames.clear();
-        for (Building b : buildings){
+        for (Building b : buildingsFinal){
             if (b.getStudy()) {
 //                Log.d("FAV1", Boolean.toString(b.getFavorite())+","+b.getName());
                 buildingNames.add(b.getName());
@@ -345,7 +356,7 @@ public class BuildingListFragment extends Fragment {
 
     private void ViewRec() {
         buildingNames.clear();
-        for (Building b : buildings){
+        for (Building b : buildingsFinal){
             if (b.getRec()) {
 //                Log.d("FAV1", Boolean.toString(b.getFavorite())+","+b.getName());
                 buildingNames.add(b.getName());
@@ -354,12 +365,8 @@ public class BuildingListFragment extends Fragment {
         }
     }
 
+
     private void displayListView() {
-        //create an ArrayAdaptar from the String Array
-//        buildingNames.clear();
-//        for (Building b : buildings){
-//            buildingNames.add(b.getName());
-//        }
         adapter = new LocationListAdapter(getActivity(), R.layout.listview_item, buildingNames);
         listView = (ListView) getView().findViewById(R.id.listview);
         listView.setAdapter(adapter);
@@ -429,6 +436,7 @@ public class BuildingListFragment extends Fragment {
                     });
                 }
             }
+
 
 
             return view;

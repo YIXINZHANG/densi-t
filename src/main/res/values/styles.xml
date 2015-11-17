@@ -24,7 +24,9 @@
         <item name="android:textColorPrimaryInverse">@android:color/white</item>
         <!--<item name="android:actionBarStyle">@style/ActionBarStyle</item>-->
     </style>
-
+    <style name="CustomTabBar" parent="AppTheme">
+        <item name="android:background">@drawable/tab_selected_example</item>
+    </style>
 
 
 </resources>

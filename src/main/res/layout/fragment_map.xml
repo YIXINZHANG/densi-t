@@ -17,14 +17,15 @@
         android:layout_weight="1"
         android:orientation="horizontal">
 
-        <Button
-            style="?android:attr/buttonStyleSmall"
-            android:layout_width="wrap_content"
-            android:layout_height="wrap_content"
-            android:text="ALL"
-            android:id="@+id/buttonAll"
-            android:layout_gravity="left"
-            android:layout_marginLeft="67dp"/>
+        <!--<Button-->
+            <!--style="?android:attr/buttonStyleSmall"-->
+            <!--android:layout_width="wrap_content"-->
+            <!--android:layout_height="wrap_content"-->
+            <!--android:text="ALL"-->
+            <!--android:id="@+id/buttonAll"-->
+            <!--android:layout_gravity="left"-->
+            <!--android:layout_marginLeft="67dp"/>-->
+
 
         <ImageButton
             android:layout_width="30dp"
@@ -53,19 +54,34 @@
             android:scaleType="fitCenter"
             android:layout_marginLeft="20dp" />
 
-        <ImageButton
-            android:layout_width="32dp"
-            android:layout_height="32dp"
-            android:id="@+id/buttonFavorite"
-            android:background="@drawable/favourite"
-            android:maxHeight="32dp"
-            android:maxWidth="32dp"
-            android:minHeight="0dp"
-            android:minWidth="0dp"
-            android:nestedScrollingEnabled="true"
-            android:scaleType="fitCenter"
-            android:layout_gravity="center"
-            android:layout_marginLeft="20dp" />
+        <!--<ImageButton-->
+        <!--android:layout_width="32dp"-->
+        <!--android:layout_height="32dp"-->
+        <!--android:id="@+id/favourite"-->
+        <!--android:background="@drawable/favourite"-->
+        <!--android:maxHeight="32dp"-->
+        <!--android:maxWidth="32dp"-->
+        <!--android:minHeight="0dp"-->
+        <!--android:minWidth="0dp"-->
+        <!--android:nestedScrollingEnabled="true"-->
+        <!--android:scaleType="fitCenter"-->
+        <!--android:layout_gravity="center"-->
+        <!--android:layout_marginLeft="20dp" />-->
+        <Spinner
+            android:id="@+id/date_spinner2"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="25dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"/>
+
+        <Spinner
+            android:id="@+id/time_spinner2"
+            android:layout_width="80dp"
+            android:layout_height="wrap_content"
+            android:layout_marginLeft="10dp"
+            android:layout_marginRight="10dp"
+            android:layout_gravity="center"/>
 
 
 

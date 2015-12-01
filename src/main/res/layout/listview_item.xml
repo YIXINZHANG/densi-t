@@ -23,6 +23,7 @@
         android:layout_height="40dp"
         android:layout_marginLeft="10dp"
         android:textSize="15dp"
+        android:textColor="#747474"
         android:layout_gravity="center_vertical|center_horizontal|left"/>
     <!--android:layout_weight="1"-->
 

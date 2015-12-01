@@ -7,26 +7,26 @@
     android:weightSum="1">
 
     <!--<LinearLayout-->
-        <!--android:layout_width="fill_parent"-->
-        <!--android:layout_height="wrap_content"-->
-        <!--android:orientation="horizontal"-->
-        <!--android:layout_marginBottom="20dp">-->
+    <!--android:layout_width="fill_parent"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:orientation="horizontal"-->
+    <!--android:layout_marginBottom="20dp">-->
 
-        <!--<Spinner-->
-            <!--android:id="@+id/time_spinner"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_marginTop="10dp"-->
-            <!--android:layout_gravity="center_vertical|right|center_horizontal"/>-->
+    <!--<Spinner-->
+    <!--android:id="@+id/time_spinner"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_gravity="center_vertical|right|center_horizontal"/>-->
 
-        <!--<Spinner-->
-            <!--android:id="@+id/date_spinner"-->
-            <!--android:layout_width="0dp"-->
-            <!--android:layout_height="wrap_content"-->
-            <!--android:layout_weight="1"-->
-            <!--android:layout_marginTop="10dp"-->
-            <!--android:layout_gravity="center_vertical|left|center_horizontal"/>-->
+    <!--<Spinner-->
+    <!--android:id="@+id/date_spinner"-->
+    <!--android:layout_width="0dp"-->
+    <!--android:layout_height="wrap_content"-->
+    <!--android:layout_weight="1"-->
+    <!--android:layout_marginTop="10dp"-->
+    <!--android:layout_gravity="center_vertical|left|center_horizontal"/>-->
 
     <!--</LinearLayout>-->
 
@@ -35,34 +35,6 @@
         android:orientation="vertical"
         android:layout_height="420dp"
         android:layout_weight="0.9" >
-        <TextView
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Favorite"
-            android:textSize="20dp"
-            android:layout_marginTop="30dp"
-            android:id="@+id/favText"
-            android:textColor="#646565"
-            android:paddingLeft="10dp"/>
-
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@android:color/darker_gray"/>-->
-
-        <ListView
-            android:id="@+id/listviewFavorite"
-            android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:layout_marginTop="10dp" />
-
-        <View
-            android:layout_marginTop="20dp"
-            android:layout_width="match_parent"
-            android:layout_height="3dp"
-            android:id="@+id/favView"
-            android:background="@android:color/darker_gray"/>
-
 
         <TextView
             android:layout_width="match_parent"
@@ -74,12 +46,12 @@
             android:paddingLeft="10dp"/>
 
         <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@android:color/darker_gray"/>-->
+        <!--android:layout_width="match_parent"-->
+        <!--android:layout_height="1dp"-->
+        <!--android:background="@android:color/darker_gray"/>-->
 
         <ListView
-            android:id="@+id/listviewSuggestion"
+            android:id="@+id/listviewSuggestion2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp"/>
@@ -88,7 +60,6 @@
             android:layout_marginTop="20dp"
             android:layout_width="match_parent"
             android:layout_height="3dp"
-            android:id="@+id/favView2"
             android:background="@android:color/darker_gray"/>
 
 
@@ -96,19 +67,13 @@
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:text="Others"
-            android:id="@+id/othText"
             android:textSize="20dp"
             android:layout_marginTop="10dp"
             android:textColor="#646565"
             android:paddingLeft="10dp"/>
 
-        <!--<View-->
-            <!--android:layout_width="match_parent"-->
-            <!--android:layout_height="1dp"-->
-            <!--android:background="@android:color/darker_gray"/>-->
-
         <ListView
-            android:id="@+id/listviewOthers"
+            android:id="@+id/listviewOthers2"
             android:layout_width="match_parent"
             android:layout_height="wrap_content"
             android:layout_marginTop="10dp" />
@@ -152,22 +117,8 @@
             android:background="@drawable/recreation"
             android:scaleType="fitCenter"
             android:layout_marginLeft="20dp" />
-
-        <!--<ImageButton-->
-            <!--android:layout_width="32dp"-->
-            <!--android:layout_height="32dp"-->
-            <!--android:id="@+id/favourite"-->
-            <!--android:background="@drawable/favourite"-->
-            <!--android:maxHeight="32dp"-->
-            <!--android:maxWidth="32dp"-->
-            <!--android:minHeight="0dp"-->
-            <!--android:minWidth="0dp"-->
-            <!--android:nestedScrollingEnabled="true"-->
-            <!--android:scaleType="fitCenter"-->
-            <!--android:layout_gravity="center"-->
-            <!--android:layout_marginLeft="20dp" />-->
         <Spinner
-            android:id="@+id/date_spinner"
+            android:id="@+id/date_spinner3"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="25dp"
@@ -175,7 +126,7 @@
             android:layout_gravity="center"/>
 
         <Spinner
-            android:id="@+id/time_spinner"
+            android:id="@+id/time_spinner3"
             android:layout_width="80dp"
             android:layout_height="wrap_content"
             android:layout_marginLeft="10dp"

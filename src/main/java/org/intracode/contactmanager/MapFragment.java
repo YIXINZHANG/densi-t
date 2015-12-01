@@ -5,6 +5,10 @@ import android.app.SearchManager;
 import android.content.Context;
 import android.content.Intent;
 import android.database.MatrixCursor;
+import android.graphics.Bitmap;
+import android.graphics.Canvas;
+import android.graphics.Color;
+import android.graphics.Paint;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
@@ -68,14 +72,18 @@ public class MapFragment extends Fragment {
     UpdateListener2 mCallback2;
     private Calendar c;
     private int dayOfWeek;
+    private int currDate = 0;
     private int hour;
     private int minute;
     private int currTime = 0;
+    private Marker md;
+    private ArrayList<Marker> mdList = new ArrayList<Marker>();
+    private Spinner dateSpinner, timeSpinner;
 
     private boolean study, food, rec;
 
     public interface UpdateListener2 {
-        public void onArticleSelected2(int position, String id, String name);
+        public void onDayTimeSelected2(int date, int day);
     }
 
     @Override
@@ -250,29 +258,31 @@ public class MapFragment extends Fragment {
         LatLng newPosition = new LatLng(newLat,newLon);
         cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, 15.5f);
         map.animateCamera(cameraUpdate);
-
+        mdList.clear();
         for (int i=0; i < positions.size(); i++) {
 //            map.addMarker(new MarkerOptions().position(positions.get(i))
 //                            .title(buildingNames.get(i)));
             ////
             ///
             if (buildings.get(i).getBusynessNow() < 35) {
-                Marker md = map.addMarker(new MarkerOptions()
+                md = map.addMarker(new MarkerOptions()
                         .position(positions.get(i))
                         .title(buildingNames.get(i))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
             } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                Marker md = map.addMarker(new MarkerOptions()
+                md = map.addMarker(new MarkerOptions()
                         .position(positions.get(i))
                         .title(buildingNames.get(i))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
             } else {
-                Marker md = map.addMarker(new MarkerOptions()
+                md = map.addMarker(new MarkerOptions()
                         .position(positions.get(i))
                         .title(buildingNames.get(i))
                         .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
             }
+            mdList.add(md);
         }
+
         map.setOnInfoWindowClickListener(new WindowHandler());
         studyButton.setImageResource(R.drawable.study_selected);
 
@@ -291,7 +301,7 @@ public class MapFragment extends Fragment {
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
 
-        Spinner timeSpinner = (Spinner) view.findViewById(R.id.time_spinner2);
+        timeSpinner = (Spinner) view.findViewById(R.id.time_spinner2);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapters3 = ArrayAdapter.createFromResource(getActivity(), R.array.time_array2, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
@@ -309,7 +319,7 @@ public class MapFragment extends Fragment {
                 for (Building b : buildings) {
                     b.setBusyneesNow(b.getBusynessArray()[currTime]);
                 }
-
+                mCallback2.onDayTimeSelected2(dateSpinner.getSelectedItemPosition(), position);
                 if (study) {
                     updateStudyView();
                 } else if (food) {
@@ -317,7 +327,6 @@ public class MapFragment extends Fragment {
                 } else if (rec) {
                     updateRecView();
                 }
-//                displayListView();
             }
 
             @Override
@@ -327,7 +336,7 @@ public class MapFragment extends Fragment {
             }
         });
 
-        Spinner dateSpinner = (Spinner) view.findViewById(R.id.date_spinner2);
+        dateSpinner = (Spinner) view.findViewById(R.id.date_spinner2);
         // Create an ArrayAdapter using the string array and a default spinner layout
         ArrayAdapter<CharSequence> adapters4 = ArrayAdapter.createFromResource(getActivity(), R.array.day_array2, android.R.layout.simple_spinner_item);
         // Specify the layout to use when the list of choices appears
@@ -341,11 +350,40 @@ public class MapFragment extends Fragment {
             public void onItemSelected(AdapterView<?> parent, View view,
                                        int position, long id) {
                 // TODO Auto-generated method stub
-                dayOfWeek = position;
-                currTime = position;
-                for (Building b : buildings) {
-                    b.setBusyneesNow(b.getBusynessArray()[currTime]);
+                currDate = position;
+                if (currDate == 0 || currDate == 6) {
+                    for (Building b : buildings) {
+                        Random r = new Random();
+                        int a = r.nextInt(40) - 20;
+                        if ((b.getBusynessArray()[currTime])/2 - a < 0) {
+                            a = 0;
+                        } else {
+                            a = ((b.getBusynessArray()[currTime]) - a)/2;
+                        }
+                        b.setBusyneesNow(a);
+                    }
+                    System.out.println("weekend");
+                } else {
+                    for (Building b : buildings) {
+                        Random r = new Random();
+                        int a = r.nextInt(40) - 20;
+                        if (b.getBusynessArray()[currTime] - a < 0) {
+                            a = 0;
+                        } else {
+                            a = b.getBusynessArray()[currTime] - a;
+                            System.out.println(a);
+                        }
+                        b.setBusyneesNow(a);
+                    }
                 }
+                if (study) {
+                    updateStudyView();
+                } else if (food) {
+                    updateFoodView();
+                } else if (rec) {
+                    updateRecView();
+                }
+                mCallback2.onDayTimeSelected2(position, timeSpinner.getSelectedItemPosition());
 //                displayListView();
             }
 
@@ -357,10 +395,20 @@ public class MapFragment extends Fragment {
         });
     }
 
-    public void reload(int p, String id, String name) {
-        LatLng position = positions.get(p);
-        cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 15.0f);
-        map.animateCamera(cameraUpdate);
+    public void reload(int day, int time) {
+//        LatLng position = positions.get(p);
+//        cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 15.0f);
+//        map.animateCamera(cameraUpdate);
+        // update the view
+        dateSpinner.setSelection(day);
+        timeSpinner.setSelection(time);
+        if (study) {
+            updateStudyView();
+        } else if (food) {
+            updateFoodView();
+        } else if (rec) {
+            updateRecView();
+        }
     }
 
     @Override
@@ -411,7 +459,6 @@ public class MapFragment extends Fragment {
             String name = "Something"; // please add the name of building
             String id = "ID"; // add the ID
             ///////////////////////////////////////////////////////////////////////////
-            mCallback2.onArticleSelected2(number, id, name);
             actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
             actionBar.setSelectedNavigationItem(1);
         }
@@ -466,30 +513,34 @@ public class MapFragment extends Fragment {
         food = false;
         rec = false;
         map.clear();
+
         ArrayList<Double> lat = new ArrayList<Double>();
         ArrayList<Double> lon = new ArrayList<Double>();
+        mdList.clear();
         for (int i=0; i < buildingNames.size(); i++) {
             if (i != 3) {
                 lat.add(positions.get(i).latitude);
                 lon.add(positions.get(i).longitude);
                 if (buildings.get(i).getBusynessNow() < 35) {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
                 } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
                 } else {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
                 }
+                mdList.add(md);
             }
         }
+
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;
         double newLon = (Collections.max(lon) + Collections.min(lon))/2;
         double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
@@ -497,7 +548,6 @@ public class MapFragment extends Fragment {
         LatLng newPosition = new LatLng(newLat,newLon);
         float zoom;
         if (maxLat > maxLon) {
-            System.out.println("Max " + maxLat);
             zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
         } else {
             zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
@@ -514,26 +564,56 @@ public class MapFragment extends Fragment {
         map.clear();
         ArrayList<Double> lat = new ArrayList<Double>();
         ArrayList<Double> lon = new ArrayList<Double>();
+        mdList.clear();
         for (int i=0; i < buildingNames.size(); i++) {
             if (i == 1 || i == 3 || i == 5) {
                 lat.add(positions.get(i).latitude);
                 lon.add(positions.get(i).longitude);
                 if (buildings.get(i).getBusynessNow() < 35) {
-                    Marker md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
+//                    md = map.addMarker(new MarkerOptions()
+//                            .position(positions.get(i))
+//                            .title(buildingNames.get(i))
+//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
+                    Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+                    Bitmap bmp = Bitmap.createBitmap(200, 50, conf);
+                    Canvas canvas = new Canvas(bmp);
+                    Paint paint = new Paint();
+                    paint.setColor(Color.BLACK);
+                    paint.setTextSize(16);
+
+                    canvas.drawText("TEXT", 0, 50, paint); // paint defines the text color, stroke width, size
+                    map.addMarker(new MarkerOptions()
+                                    .position(positions.get(i))
+                                            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker2))
+                                    .icon(BitmapDescriptorFactory.fromBitmap(bmp))
+                                    .anchor(0.5f, 1)
+                    );
                 } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                    Marker md = map.addMarker(new MarkerOptions()
+//                    md = map.addMarker(new MarkerOptions()
+//                            .position(positions.get(i))
+//                            .title(buildingNames.get(i))
+//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
+                    Bitmap.Config conf = Bitmap.Config.ARGB_8888;
+                    Bitmap bmp = Bitmap.createBitmap(200, 50, conf);
+                    Canvas canvas = new Canvas(bmp);
+                    Paint paint = new Paint();
+                    paint.setColor(Color.BLACK);
+                    paint.setTextSize(16);
+
+                    canvas.drawText("TEXT", 0, 50, paint); // paint defines the text color, stroke width, size
+                    map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
+                                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker2))
+                            .icon(BitmapDescriptorFactory.fromBitmap(bmp))
+                            .anchor(0.5f, 1)
+                    );
                 } else {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
                 }
+                mdList.add(md);
             }
         }
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;
@@ -559,28 +639,31 @@ public class MapFragment extends Fragment {
         map.clear();
         ArrayList<Double> lat = new ArrayList<Double>();
         ArrayList<Double> lon = new ArrayList<Double>();
+        mdList.clear();
         for (int i=0; i < buildingNames.size(); i++) {
             if (i == 1 || i == 3) {
                 lat.add(positions.get(i).latitude);
                 lon.add(positions.get(i).longitude);
                 if (buildings.get(i).getBusynessNow() < 35) {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
                 } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
                 } else {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
                 }
+                mdList.add(md);
             }
         }
+
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;
         double newLon = (Collections.max(lon) + Collections.min(lon))/2;
         double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
@@ -606,21 +689,22 @@ public class MapFragment extends Fragment {
                 lat.add(positions.get(i).latitude);
                 lon.add(positions.get(i).longitude);
                 if (buildings.get(i).getBusynessNow() < 35) {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
                 } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
                 } else {
-                    Marker md = map.addMarker(new MarkerOptions()
+                    md = map.addMarker(new MarkerOptions()
                             .position(positions.get(i))
                             .title(buildingNames.get(i))
                             .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
                 }
+//                md.showInfoWindow();
             }
         }
         double newLat = (Collections.max(lat) + Collections.min(lat))/2;

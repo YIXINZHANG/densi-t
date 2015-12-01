@@ -1170,6 +1170,13 @@
         <item name="android:scaleType">center</item>
         <item name="android:background">?attr/selectableItemBackground</item>
     </style>
+    <!-- From: file:/C:/Users/pbz18_000/Desktop/Densi-T/densi-t/src/main/res/values/styles.xml -->
+    <eat-comment/>
+    <style name="CustomTabBar" parent="AppTheme">
+        <item name="android:background">@drawable/tab_selected_example</item>
+    </style>
+    <!-- From: file:/C:/Users/pbz18_000/Desktop/Densi-T/densi-t/build/intermediates/exploded-aar/com.android.support/appcompat-v7/21.0.3/res/values/values.xml -->
+    <eat-comment/>
     <style name="Platform.AppCompat" parent="android:Theme">
         <item name="android:windowNoTitle">true</item>
         <item name="buttonBarStyle">@android:style/ButtonBar</item>

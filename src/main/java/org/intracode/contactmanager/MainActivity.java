@@ -1,12 +1,16 @@
 package org.intracode.contactmanager;
 
 import android.content.SharedPreferences;
+import android.graphics.Color;
+import android.graphics.drawable.ColorDrawable;
 import android.support.v7.app.ActionBar;
 import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
 import android.widget.Toast;
+
+import java.util.ArrayList;
 
 public class MainActivity extends ActionBarActivity implements ActionBar.TabListener, BuildingListFragment.UpdateListener, MapFragment.UpdateListener2{
 
@@ -33,23 +37,34 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private String favoriteList = "favorite";
     private boolean dummySetting;
     private int clickedPosition;
+    private SharedPreferences settings;
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
-
+        ArrayList<String> bnames = new ArrayList<>();
+        bnames.add("Culc");
+        bnames.add("Student Center");
+        bnames.add("Library");
+        bnames.add("CRC");
+        bnames.add("Klaus");
+        bnames.add("CoC");
 
 
         //Adding preferences
         ////////////////////////////////////////////////////////////////////////
-        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
-        dummySetting = settings.getBoolean(favoriteList, false);
-        clickedPosition = settings.getInt("clicked", 0);
-        String a = dummySetting + " " + clickedPosition;
+        settings = getSharedPreferences(PREFS_NAME, 0);
+
+        for (String s:bnames) {
+            System.out.println(settings.getBoolean(s, false) + " new");
+        }
 //        Toast.makeText(this, a, Toast.LENGTH_LONG).show();
         ////////////////////////////////////////////////////////////////////////
 
+        getSupportActionBar().setBackgroundDrawable(new ColorDrawable(Color.parseColor("#37ABE2")));
+        getSupportActionBar().setStackedBackgroundDrawable(new ColorDrawable(Color.parseColor("#37ABE2")));
+        getSupportActionBar().setIcon(new ColorDrawable(Color.parseColor("#F4E245")));
 
 
         viewPager = (ViewPager) findViewById(R.id.container);
@@ -102,28 +117,42 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
 
     }
 
-    public void onArticleSelected(int position, String id, String name) {
+    public void onArticleSelected(String name, boolean check) {
         // The user selected the headline of an article from the HeadlinesFragment
         // Do something here to display that article
-        BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
-        busynessFragment.reload(position, id, name);
-        MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
-
-        dummySetting = true;
-        clickedPosition = position;
+//        BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
+//        busynessFragment.reload(position, id, name);
+//        MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
+//
+//        dummySetting = true;
+//        clickedPosition = position;
 //        mapFragment.reload(position, id, name);
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putBoolean(name, check);
+//        editor.putBoolean(favoriteList, dummySetting);
+//        editor.putInt("clicked", clickedPosition);
+
+        // Commit the edits!
+        editor.commit();
 
 
     }
 
-    public void onArticleSelected2(int position, String id, String name) {
+    public void onDayTimeSelected2(int day, int time) {
         // The user selected the headline of an article from the HeadlinesFragment
         // Do something here to display that article
-        BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
-        busynessFragment.reload(position, id, name);
-        MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
-        mapFragment.reload(position, id, name);
+//        BusynessFragment busynessFragment = (BusynessFragment) mAdapter.instantiateItem(viewPager, 1);
+//        busynessFragment.reload(position, id, name);
+//        MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 2);
+//        mapFragment.reload(position, id, name);
+        BuildingListFragment buidlinglistFragment = (BuildingListFragment) mAdapter.instantiateItem(viewPager, 0);
+        buidlinglistFragment.reload(day, time);
+    }
 
+    public void onDayTimeSelected(int day, int time) {
+        MapFragment mapFragment = (MapFragment) mAdapter.instantiateItem(viewPager, 1);
+        mapFragment.reload(day, time);
     }
 
     @Override

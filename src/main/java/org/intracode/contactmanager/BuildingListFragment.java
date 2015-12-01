@@ -123,18 +123,26 @@ public class BuildingListFragment extends Fragment {
         }
     }
 
+    public String timeToT(int hour, int day) {
+        int res = (day*24+hour)*60;
+        Log.d("TIME", Integer.toString(res));
+        return Integer.toString(res);
+    }
+
     @Override
     public void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
-//        String[] params = new String[4];
-//        params[0] = API;
-//        params[1] = "1";
-//        params[2] = Long.toString(System.currentTimeMillis() / 1000L);
-//        params[3] = Long.toString(System.currentTimeMillis() / 1000L);
-//        Log.d("TIME", params[3]);
-//        Busyness busy = new Busyness();
-//        busy.execute(API);
-//        busy.execute(params);//TESTING
+        // get current time
+        Calendar c = Calendar.getInstance();
+        dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
+        hour = c.get(Calendar.HOUR_OF_DAY);
+        // make api call
+        String[] params = new String[2];
+        params[0] = API;
+        params[1] = timeToT(hour,dayOfWeek);
+        Busyness busy = new Busyness();
+        busy.execute(params);
+
         int[] t1 = {21,18,10,7,5,5,10,29,38,58,73,85,87,83,71,53,46,42,62,65,53,51,42,36};
         int[] t2 = {18,10,4,2,3,4,9,24,34,49,73,87,93,81,67,42,37,39,44,31,26,27,23,20};
         int[] t3 = {32,25,11,8,6,5,4,22,29,32,42,59,62,78,75,61,73,55,78,72,64,58,47,39};
@@ -1053,12 +1061,12 @@ public class BuildingListFragment extends Fragment {
             String urlString = params[0]; // URL to call
             InputStream in = null;
             // HTTP Get
-            int paramLength = params.length; //storing [0] url, [1] id [2,3]starttime/endtime
+            int paramLength = params.length; //storing [0] url, [1] timestamp, no other param needed
             if (paramLength == 3 || paramLength >=5) {
                 Log.d("ERROR", "params length error");
             }
             if (paramLength >=2) {
-                urlString = urlString + "/" + params[1];
+                urlString = urlString + "?t=" + params[1];
                 Log.d("URL", urlString);
             }
             if (paramLength ==4) {
@@ -1101,7 +1109,9 @@ public class BuildingListFragment extends Fragment {
                         String[]tokens = value.split(":");
                         String percent = tokens[tokens.length-1];
                         Log.d("JSON", "key =" + id + "busyness" + percent);
-                        bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+                        String roundPercent = Integer.toString(Math.round(Float.parseFloat(percent.substring(0,percent.length()-1))));
+                        bldgbusyness.put(id, roundPercent);
+                        Log.d("JSON", "key =" + id + ", busyness=" + roundPercent);
                     } else {
                         bldgnames.put(id, name);
                         bldgbusyness.put(id, "0");
@@ -1187,7 +1197,7 @@ public class BuildingListFragment extends Fragment {
 //                Log.d("MAPPING", bldgnames.get(entry.getKey()));
                 buildingNames.add(entry.getKey());
             }
-            getBusynessAtTime(w.result);
+//            getBusynessAtTime(w.result);
 
             Log.d("bldgnames", "Buildings " + bldgnames);
             Log.d("bldgbusyness", "Buildbusyness " + bldgbusyness);

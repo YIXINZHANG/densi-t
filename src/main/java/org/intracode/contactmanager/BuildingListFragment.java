@@ -68,6 +68,7 @@ public class BuildingListFragment extends Fragment {
     private ArrayList<String> buildingNamesDummy = new ArrayList<String>();
     private ArrayList<LatLng> positions = new ArrayList<LatLng>();
     private TextView busyness;
+    
     public  Map<String, String> bldgnames = new HashMap<String, String>();
     public  Map<String, String> bldglocs = new HashMap<String, String>();
     public  Map<String, String> bldgbusyness = new HashMap<String, String>();
@@ -143,27 +144,27 @@ public class BuildingListFragment extends Fragment {
         Busyness busy = new Busyness();
         busy.execute(params);
 
-        int[] t1 = {21,18,10,7,5,5,10,29,38,58,73,85,87,83,71,53,46,42,62,65,53,51,42,36};
-        int[] t2 = {18,10,4,2,3,4,9,24,34,49,73,87,93,81,67,42,37,39,44,31,26,27,23,20};
-        int[] t3 = {32,25,11,8,6,5,4,22,29,32,42,59,62,78,75,61,73,55,78,72,64,58,47,39};
-        int[] t4 = {0,0,0,0,25,34,30,21,29,35,33,28,39,35,49,52,67,61,72,74,13,2,0,0};
-        int[] t5 = {19,17,11,6,4,5,8,28,37,56,68,71,70,68,65,59,42,38,40,43,47,36,31,20};
-        int[] t6 = {24,19,15,9,4,5,5,25,42,51,62,87,82,71,65,61,44,41,43,49,39,37,31,29};
+//        int[] t1 = {21,18,10,7,5,5,10,29,38,58,73,85,87,83,71,53,46,42,62,65,53,51,42,36};
+//        int[] t2 = {18,10,4,2,3,4,9,24,34,49,73,87,93,81,67,42,37,39,44,31,26,27,23,20};
+//        int[] t3 = {32,25,11,8,6,5,4,22,29,32,42,59,62,78,75,61,73,55,78,72,64,58,47,39};
+//        int[] t4 = {0,0,0,0,25,34,30,21,29,35,33,28,39,35,49,52,67,61,72,74,13,2,0,0};
+//        int[] t5 = {19,17,11,6,4,5,8,28,37,56,68,71,70,68,65,59,42,38,40,43,47,36,31,20};
+//        int[] t6 = {24,19,15,9,4,5,5,25,42,51,62,87,82,71,65,61,44,41,43,49,39,37,31,29};
 
 
-        Building newBuilding1 = new Building("1", "Culc", 33.774599, -84.396372, 39, t1, true, false, true, false);
-        Building newBuilding2 = new Building("2", "Student Center", 33.774028, -84.398818, 35, t2, true, true, true, true);
-        Building newBuilding3 = new Building("3", "Library", 33.774327, -84.395825, 31, t3, true, false, true, false);
-        Building newBuilding4 = new Building("4", "CRC", 33.77562, -84.403753, 46, t4, false, true, false, true);
-        Building newBuilding5 = new Building("5","Klaus", 33.777212, -84.396281, 33, t5, false, false, true, false);
-        Building newBuilding6 = new Building("6", "CoC", 33.777386, -84.396281, 52, t6, false, true, true, false);
-        buildings.add(newBuilding1);
-        buildings.add(newBuilding2);
-        buildings.add(newBuilding3);
-        buildings.add(newBuilding4);
-        buildings.add(newBuilding5);
-        buildings.add(newBuilding6);
-        buildingsFinal.addAll(buildings);
+//        Building newBuilding1 = new Building("1", "Culc", 33.774599, -84.396372, 39, t1, true, false, true, false);
+//        Building newBuilding2 = new Building("2", "Student Center", 33.774028, -84.398818, 35, t2, true, true, true, true);
+//        Building newBuilding3 = new Building("3", "Library", 33.774327, -84.395825, 31, t3, true, false, true, false);
+//        Building newBuilding4 = new Building("4", "CRC", 33.77562, -84.403753, 46, t4, false, true, false, true);
+//        Building newBuilding5 = new Building("5","Klaus", 33.777212, -84.396281, 33, t5, false, false, true, false);
+//        Building newBuilding6 = new Building("6", "CoC", 33.777386, -84.396281, 52, t6, false, true, true, false);
+//        buildings.add(newBuilding1);
+//        buildings.add(newBuilding2);
+//        buildings.add(newBuilding3);
+//        buildings.add(newBuilding4);
+//        buildings.add(newBuilding5);
+//        buildings.add(newBuilding6);
+//        buildingsFinal.addAll(buildings);
     }
 
     @Override
@@ -194,9 +195,9 @@ public class BuildingListFragment extends Fragment {
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
         changeList();
-        for (Building b:buildings) {
-            b.setBusyneesNow(b.getBusynessArray()[hour]);
-        }
+//        for (Building b:buildings) {
+//            b.setBusyneesNow(b.getBusynessArray()[hour]);
+//        }
 
         timeSpinner = (Spinner) getActivity().findViewById(R.id.time_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
@@ -213,9 +214,15 @@ public class BuildingListFragment extends Fragment {
                                            int position, long id) {
                     // TODO Auto-generated method stub
                     currTime = position;
-                    for (Building b : buildings) {
-                        b.setBusyneesNow(b.getBusynessArray()[currTime]);
-                    }
+//                    for (Building b : buildings) {
+//                        b.setBusyneesNow(b.getBusynessArray()[currTime]);
+//                    }
+                    String[] params = new String[2];
+                    params[0] = API;
+                    params[1] = timeToT(currTime,currDate);
+                    Busyness busy = new Busyness();
+                    busy.execute(params);
+
                     mCallback.onDayTimeSelected(dateSpinner.getSelectedItemPosition(), position);
                     displayListView();
                 }
@@ -244,29 +251,35 @@ public class BuildingListFragment extends Fragment {
                     Random r = new Random();
                     currDate = position;
                     mCallback.onDayTimeSelected(position, timeSpinner.getSelectedItemPosition());
-                    if (currDate == 0 || currDate == 6) {
-                        for (Building b : buildings) {
-                            int a = r.nextInt(40) - 20;
-                            if ((b.getBusynessArray()[currTime])/2 - a < 0) {
-                                a = 0;
-                            } else {
-                                a = ((b.getBusynessArray()[currTime]) - a)/2;
-                            }
-                            b.setBusyneesNow(a);
-                        }
-                        displayListView2();
-                    } else {
-                        for (Building b : buildings) {
-                            int a = r.nextInt(40) - 20;
-                            if (b.getBusynessArray()[currTime] - a < 0) {
-                                a = 0;
-                            } else {
-                                a = b.getBusynessArray()[currTime] - a;
-                            }
-                            b.setBusyneesNow(a);
-                        }
-                        displayListView2();
-                    }
+//                    if (currDate == 0 || currDate == 6) {
+//                        for (Building b : buildings) {
+//                            int a = r.nextInt(40) - 20;
+//                            if ((b.getBusynessArray()[currTime])/2 - a < 0) {
+//                                a = 0;
+//                            } else {
+//                                a = ((b.getBusynessArray()[currTime]) - a)/2;
+//                            }
+//                            b.setBusyneesNow(a);
+//                        }
+//                        displayListView2();
+//                    } else {
+//                        for (Building b : buildings) {
+//                            int a = r.nextInt(40) - 20;
+//                            if (b.getBusynessArray()[currTime] - a < 0) {
+//                                a = 0;
+//                            } else {
+//                                a = b.getBusynessArray()[currTime] - a;
+//                            }
+//                            b.setBusyneesNow(a);
+//                        }
+//                        displayListView2();
+//                    }
+                    String[] params = new String[2];
+                    params[0] = API;
+                    params[1] = timeToT(hour,dayOfWeek);
+                    Busyness busy = new Busyness();
+                    busy.execute(params);
+                    displayListView2();
                 }
 
                 @Override
@@ -586,8 +599,9 @@ public class BuildingListFragment extends Fragment {
 //            if (name != null) {
 //                percent = Integer.parseInt(bldgbusyness.get(buildingName));
 //            }
-                    int[] times = b.getBusynessArray();
-                    percent = times[currTime];
+//                    int[] times = b.getBusynessArray();
+//                    percent = times[currTime];
+                    percent = b.getBusynessNow();
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
@@ -663,8 +677,9 @@ public class BuildingListFragment extends Fragment {
 //            if (name != null) {
 //                percent = Integer.parseInt(bldgbusyness.get(buildingName));
 //            }
-                    int[] times = b.getBusynessArray();
-                    percent = times[currTime];
+//                    int[] times = b.getBusynessArray();
+                    percent = b.getBusynessNow();
+//                    percent = times[currTime];
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
@@ -739,8 +754,9 @@ public class BuildingListFragment extends Fragment {
 //            if (name != null) {
 //                percent = Integer.parseInt(bldgbusyness.get(buildingName));
 //            }
-                    int[] times = b.getBusynessArray();
-                    percent = times[currTime];
+//                    int[] times = b.getBusynessArray();
+//                    percent = times[currTime];
+                    percent = b.getBusynessNow();
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
@@ -834,7 +850,7 @@ public class BuildingListFragment extends Fragment {
 //            if (name != null) {
 //                percent = Integer.parseInt(bldgbusyness.get(buildingName));
 //            }
-                    int[] times = b.getBusynessArray();
+//                    int[] times = b.getBusynessArray();
                     percent = b.getBusynessNow();
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
@@ -896,7 +912,7 @@ public class BuildingListFragment extends Fragment {
                     name = (TextView) view.findViewById(R.id.buildingName);
                     name.setText(b.getName());
                     int percent = 0;
-                    int[] times = b.getBusynessArray();
+//                    int[] times = b.getBusynessArray();
                     percent = b.getBusynessNow();
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
                     if (percent < 30) {
@@ -952,7 +968,8 @@ public class BuildingListFragment extends Fragment {
                     name = (TextView) view.findViewById(R.id.buildingName);
                     name.setText(b.getName());
                     int percent = 0;
-                    int[] times = b.getBusynessArray();
+//                    percent = b.getBusynessNow();
+//                    int[] times = b.getBusynessArray();
                     percent = b.getBusynessNow();
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
                     if (percent < 30) {
@@ -1094,31 +1111,46 @@ public class BuildingListFragment extends Fragment {
             try {
                 JSONObject js = new JSONObject(response);
                 JSONArray bldgs = js.getJSONArray("locations");
+                buildingsFinal.clear();
                 for(int i = 0 ; i < bldgs.length() ; i++){
                     String value = "0";
                     String name = bldgs.getJSONObject(i).getString("name");
                     String id = bldgs.getJSONObject(i).getString("id");
                     JSONObject geo = bldgs.getJSONObject(i).getJSONObject("geocode");
+                    String lat = geo.getString("lat");
+                    String lon = geo.getString("long");
+                    Building b = new Building(id,name,Double.parseDouble(lat),Double.parseDouble(lon),0,false,false,false,false);
+                    JSONArray types = bldgs.getJSONObject(i).getJSONArray("types");
+                    String[] ts = types.toString().split("\\W");
+                    for (String t:ts) {
+                        if (t.equals("eat")) b.setFood(true);
+                        if (t.equals("study")) b.setStudy(true);
+                        if (t.equals("recreation")) b.setRec(true);
+                    }
+//                    Log.d("TYPE", ts[ts.length-1]);
+//                    Log.d("GEO", lat + ", " + lon);
                     if (bldgs.getJSONObject(i).has("busyness")) {
                         JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
                         value = keys.toString();
 
 
-                        bldgnames.put(id, name);
+//                        bldgnames.put(id, name);
 
-                        String[]tokens = value.split(":");
-                        String percent = tokens[tokens.length-1];
-                        Log.d("JSON", "key =" + id + "busyness" + percent);
-                        String roundPercent = Integer.toString(Math.round(Float.parseFloat(percent.substring(0,percent.length()-1))));
-                        bldgbusyness.put(id, roundPercent);
+                        String[] tokens = value.split(":");
+                        String percent = tokens[tokens.length - 1];
+//                        Log.d("JSON", "key =" + id + "busyness" + percent);
+                        int roundPercent = Math.round(Float.parseFloat(percent.substring(0, percent.length() - 1)));
+//                        bldgbusyness.put(id, roundPercent);
+                        b.setBusyneesNow(roundPercent);
                         Log.d("JSON", "key =" + id + ", busyness=" + roundPercent);
-                    } else {
-                        bldgnames.put(id, name);
-                        bldgbusyness.put(id, "0");
+//                    } else {
+//                        bldgnames.put(id, name);
+//                        bldgbusyness.put(id, "0");
                     }
-                    bldglocs.put(id, geo.toString());
-                    Log.d("JSON", "key =" + id + "name" + name);
-                    Log.d("JSON", "key =" + id + "geo" + geo.toString());
+//                    bldglocs.put(id, geo.toString());
+//                    Log.d("JSON", "key =" + id + "name" + name);
+//                    Log.d("JSON", "key =" + id + "geo" + geo.toString());
+                    buildingsFinal.add(b);
 
                 }
 
@@ -1192,18 +1224,19 @@ public class BuildingListFragment extends Fragment {
 
 //            if (w.numOfParams == 1)   {
             getLocations(w.result);
-            buildingNames.clear();
-            for (Map.Entry<String, String> entry : bldgbusyness.entrySet()) {
-//                Log.d("MAPPING", bldgnames.get(entry.getKey()));
-                buildingNames.add(entry.getKey());
-            }
-//            getBusynessAtTime(w.result);
-
-            Log.d("bldgnames", "Buildings " + bldgnames);
-            Log.d("bldgbusyness", "Buildbusyness " + bldgbusyness);
-            Log.d("bldglocs", "Buildbldglocs " + bldglocs);
-            Log.d("buildingNames", "Builddmanes " + buildingNames);
-            Log.d("busynessTemp", "BuildTemp " + busynessTemp);
+            Log.d("BLDG", buildingsFinal.toString());
+//            buildingNames.clear();
+//            for (Map.Entry<String, String> entry : bldgbusyness.entrySet()) {
+////                Log.d("MAPPING", bldgnames.get(entry.getKey()));
+//                buildingNames.add(entry.getKey());
+//            }
+////            getBusynessAtTime(w.result);
+//
+//            Log.d("bldgnames", "Buildings " + bldgnames);
+//            Log.d("bldgbusyness", "Buildbusyness " + bldgbusyness);
+//            Log.d("bldglocs", "Buildbldglocs " + bldglocs);
+//            Log.d("buildingNames", "Builddmanes " + buildingNames);
+//            Log.d("busynessTemp", "BuildTemp " + busynessTemp);
 //            gb.addBldglocs(bldglocs);
 //            gb.addBusynessTemp(busynessTemp);
 //            gb.addBldgames(bldgnames);
@@ -1229,6 +1262,7 @@ public class BuildingListFragment extends Fragment {
 //            Intent i = new Intent(SplashActivity.this, MainActivity.class);
 //
 //            startActivity(i);
+
         }
     }
 }

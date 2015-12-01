@@ -10,20 +10,20 @@ public class Building {
     private double lon;
     private double lat;
     private int busynessNow;
-    private int[] busynessArray;
+//    private int[] busynessArray;
     private boolean favorite;
     private boolean food;
     private boolean study;
     private boolean rec;
 
-    public Building (String id, String name, double lat, double lon, int busynessNow, int[] busynessArray,
+    public Building (String id, String name, double lat, double lon, int busynessNow,
                      boolean favorite, boolean food, boolean study, boolean rec) {
         this.id = id;
         this.name = name;
         this.lat = lat;
         this.lon = lon;
         this.busynessNow = busynessNow;
-        this.busynessArray = busynessArray;
+//        this.busynessArray = busynessArray;
         this.favorite = favorite;
         this.food = food;
         this.study = study;
@@ -48,9 +48,9 @@ public class Building {
         return this.busynessNow;
     }
 
-    public int[] getBusynessArray() {
-        return this.busynessArray;
-    }
+//    public int[] getBusynessArray() {
+//        return this.busynessArray;
+//    }
 
     public boolean getFavorite() {
         return this.favorite;
@@ -85,9 +85,9 @@ public class Building {
         this.busynessNow = busynessNow;
     }
 
-    public void setBusynessArray(int[] busynessArray) {
-        this.busynessArray = busynessArray;
-    }
+//    public void setBusynessArray(int[] busynessArray) {
+//        this.busynessArray = busynessArray;
+//    }
 
     public void setFavorite() {
         this.favorite = !this.favorite;

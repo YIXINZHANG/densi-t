@@ -142,12 +142,12 @@ public class MapFragment extends Fragment {
         int[] t6 = {24,19,15,9,4,5,5,25,42,51,62,87,82,71,65,61,44,41,43,49,39,37,31,29};
 
 
-        Building newBuilding1 = new Building("1","Culc", 33.774599, -84.396372, 39, t1, true, false, true, false);
-        Building newBuilding2 = new Building("2","Student Center", 33.774028, -84.398818, 35, t2, true, true, true, true);
-        Building newBuilding3 = new Building("3","Library", 33.774327, -84.395825, 31, t3, false, false, true, false);
-        Building newBuilding4 = new Building("4","CRC", 33.77562, -84.403753, 46, t4, true, true, false, true);
-        Building newBuilding5 = new Building("5","Klaus", 33.777212, -84.396281, 33, t5, false, false, true, false);
-        Building newBuilding6 = new Building("6","CoC", 33.777386, -84.396281, 52, t6, false, true, true, false);
+        Building newBuilding1 = new Building("1","Culc", 33.774599, -84.396372, 39,  true, false, true, false);
+        Building newBuilding2 = new Building("2","Student Center", 33.774028, -84.398818, 35,  true, true, true, true);
+        Building newBuilding3 = new Building("3","Library", 33.774327, -84.395825, 31,  false, false, true, false);
+        Building newBuilding4 = new Building("4","CRC", 33.77562, -84.403753, 46,  true, true, false, true);
+        Building newBuilding5 = new Building("5","Klaus", 33.777212, -84.396281, 33,  false, false, true, false);
+        Building newBuilding6 = new Building("6","CoC", 33.777386, -84.396281, 52,  false, true, true, false);
         buildings.add(newBuilding1);
         buildings.add(newBuilding2);
         buildings.add(newBuilding3);
@@ -166,9 +166,9 @@ public class MapFragment extends Fragment {
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
 
-        for (Building b:buildings) {
-            b.setBusyneesNow(b.getBusynessArray()[hour]);
-        }
+//        for (Building b:buildings) {
+//            b.setBusyneesNow(b.getBusynessArray()[hour]);
+//        }
 
 //        allButton = (Button) fragment.findViewById(R.id.buttonAll);
         foodButton = (ImageButton) fragment.findViewById(R.id.buttonFood);
@@ -316,9 +316,9 @@ public class MapFragment extends Fragment {
                                        int position, long id) {
                 // TODO Auto-generated method stub
                 currTime = position;
-                for (Building b : buildings) {
-                    b.setBusyneesNow(b.getBusynessArray()[currTime]);
-                }
+//                for (Building b : buildings) {
+//                    b.setBusyneesNow(b.getBusynessArray()[currTime]);
+//                }
                 mCallback2.onDayTimeSelected2(dateSpinner.getSelectedItemPosition(), position);
                 if (study) {
                     updateStudyView();
@@ -355,11 +355,11 @@ public class MapFragment extends Fragment {
                     for (Building b : buildings) {
                         Random r = new Random();
                         int a = r.nextInt(40) - 20;
-                        if ((b.getBusynessArray()[currTime])/2 - a < 0) {
-                            a = 0;
-                        } else {
-                            a = ((b.getBusynessArray()[currTime]) - a)/2;
-                        }
+//                        if ((b.getBusynessArray()[currTime])/2 - a < 0) {
+//                            a = 0;
+//                        } else {
+//                            a = ((b.getBusynessArray()[currTime]) - a)/2;
+//                        }
                         b.setBusyneesNow(a);
                     }
                     System.out.println("weekend");
@@ -367,12 +367,12 @@ public class MapFragment extends Fragment {
                     for (Building b : buildings) {
                         Random r = new Random();
                         int a = r.nextInt(40) - 20;
-                        if (b.getBusynessArray()[currTime] - a < 0) {
-                            a = 0;
-                        } else {
-                            a = b.getBusynessArray()[currTime] - a;
-                            System.out.println(a);
-                        }
+//                        if (b.getBusynessArray()[currTime] - a < 0) {
+//                            a = 0;
+//                        } else {
+//                            a = b.getBusynessArray()[currTime] - a;
+//                            System.out.println(a);
+//                        }
                         b.setBusyneesNow(a);
                     }
                 }

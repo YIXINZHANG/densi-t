@@ -132,7 +132,7 @@
             android:id="@+id/study"
             android:background="@drawable/study"
             android:layout_gravity="center"
-            android:scaleType="fitCenter"
+            android:scaleType="fitXY"
             android:layout_marginLeft="20dp" />
 
         <ImageButton
@@ -141,7 +141,7 @@
             android:id="@+id/food"
             android:background="@drawable/food"
             android:layout_gravity="center"
-            android:scaleType="fitCenter"
+            android:scaleType="fitXY"
             android:layout_marginLeft="20dp" />
 
         <ImageButton
@@ -150,7 +150,7 @@
             android:id="@+id/recreation"
             android:layout_gravity="center"
             android:background="@drawable/recreation"
-            android:scaleType="fitCenter"
+            android:scaleType="fitXY"
             android:layout_marginLeft="20dp" />
 
         <!--<ImageButton-->

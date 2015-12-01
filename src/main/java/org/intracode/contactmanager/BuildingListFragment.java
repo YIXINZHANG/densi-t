@@ -151,12 +151,12 @@ public class BuildingListFragment extends Fragment {
         int[] t6 = {24,19,15,9,4,5,5,25,42,51,62,87,82,71,65,61,44,41,43,49,39,37,31,29};
 
 
-        Building newBuilding1 = new Building("Culc", 33.774599, -84.396372, 39, t1, true, false, true, false);
-        Building newBuilding2 = new Building("Student Center", 33.774028, -84.398818, 35, t2, true, true, true, true);
-        Building newBuilding3 = new Building("Library", 33.774327, -84.395825, 31, t3, true, false, true, false);
-        Building newBuilding4 = new Building("CRC", 33.77562, -84.403753, 46, t4, false, true, false, true);
-        Building newBuilding5 = new Building("Klaus", 33.777212, -84.396281, 33, t5, false, false, true, false);
-        Building newBuilding6 = new Building("CoC", 33.777386, -84.396281, 52, t6, false, true, true, false);
+        Building newBuilding1 = new Building("1", "Culc", 33.774599, -84.396372, 39, t1, true, false, true, false);
+        Building newBuilding2 = new Building("2", "Student Center", 33.774028, -84.398818, 35, t2, true, true, true, true);
+        Building newBuilding3 = new Building("3", "Library", 33.774327, -84.395825, 31, t3, true, false, true, false);
+        Building newBuilding4 = new Building("4", "CRC", 33.77562, -84.403753, 46, t4, false, true, false, true);
+        Building newBuilding5 = new Building("5","Klaus", 33.777212, -84.396281, 33, t5, false, false, true, false);
+        Building newBuilding6 = new Building("6", "CoC", 33.777386, -84.396281, 52, t6, false, true, true, false);
         buildings.add(newBuilding1);
         buildings.add(newBuilding2);
         buildings.add(newBuilding3);

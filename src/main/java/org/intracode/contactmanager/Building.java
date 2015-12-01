@@ -5,6 +5,7 @@ package org.intracode.contactmanager;
  */
 public class Building {
 
+    private String id;
     private String name;
     private double lon;
     private double lat;
@@ -15,8 +16,9 @@ public class Building {
     private boolean study;
     private boolean rec;
 
-    public Building (String name, double lat, double lon, int busynessNow, int[] busynessArray,
+    public Building (String id, String name, double lat, double lon, int busynessNow, int[] busynessArray,
                      boolean favorite, boolean food, boolean study, boolean rec) {
+        this.id = id;
         this.name = name;
         this.lat = lat;
         this.lon = lon;
@@ -31,6 +33,8 @@ public class Building {
     public String getName() {
         return this.name;
     }
+
+    public String getId() { return this.id; }
 
     public double getLon() {
         return this.lon;
@@ -89,7 +93,7 @@ public class Building {
         this.favorite = !this.favorite;
     }
 
-
+    public void setId(String id) { this.id = id; }
     //Categories
     public void setFood(boolean food) {
         this.food = food;

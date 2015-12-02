@@ -18,6 +18,8 @@ dependencies {
     compile files('libs/google-play-services.jar')
     compile 'com.android.support:appcompat-v7:21.0.3'
     compile 'com.akexorcist:RoundCornerProgressBar:2.0.3'
+    compile 'com.jjoe64:graphview:4.0.1'
+
 
 }
 

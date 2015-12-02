@@ -8,6 +8,8 @@ import android.os.Bundle;
 import android.support.v4.app.FragmentManager;
 import android.support.v4.view.ViewPager;
 import android.support.v7.app.ActionBarActivity;
+import android.text.Html;
+import android.widget.TextView;
 import android.widget.Toast;
 
 import java.util.ArrayList;
@@ -38,26 +40,33 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
     private boolean dummySetting;
     private int clickedPosition;
     private SharedPreferences settings;
+    private GlobalVariables gv;
 
     @Override
     protected final void onCreate(final Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ArrayList<String> bnames = new ArrayList<>();
-        bnames.add("Culc");
+        bnames.add("CULC");
         bnames.add("Student Center");
-        bnames.add("Library");
+        bnames.add("Library 4th Floor");
         bnames.add("CRC");
         bnames.add("Klaus");
         bnames.add("CoC");
-
+        bnames.add("Howey L2");
+        gv = (GlobalVariables) getApplication();
 
         //Adding preferences
         ////////////////////////////////////////////////////////////////////////
         settings = getSharedPreferences(PREFS_NAME, 0);
 
         for (String s:bnames) {
-            System.out.println(settings.getBoolean(s, false) + " new");
+
+            System.out.println(settings.getBoolean(s, false) + " new " + s);
+            if (settings.getBoolean(s, false)) {
+                gv.addBuildingNames(s);
+            }
+
         }
 //        Toast.makeText(this, a, Toast.LENGTH_LONG).show();
         ////////////////////////////////////////////////////////////////////////
@@ -75,8 +84,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         actionBar.setHomeButtonEnabled(false);
         actionBar.setNavigationMode(ActionBar.NAVIGATION_MODE_TABS);
 
+        getSupportActionBar().setTitle((Html.fromHtml("<font color=\"#FFFFFF\">" + "Densi-T" + "</font>")));
+
         for (String tab_name : tabs) {
-            actionBar.addTab(actionBar.newTab().setText(tab_name).setTabListener(this));
+            TextView tView = new TextView(getApplicationContext());
+            tView.setText(tab_name);
+            tView.setTextColor(Color.WHITE);
+            actionBar.addTab(actionBar.newTab().setTabListener(this).setCustomView(tView));
         }
 
         viewPager.setOnPageChangeListener(new ViewPager.OnPageChangeListener() {

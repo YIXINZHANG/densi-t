@@ -43,8 +43,8 @@ public class GlobalVariables extends Application {
         this.bldgbusyness.putAll(bldgbusyness);
     }
 
-    public void addBuildingNames (ArrayList<String> buildingNames) {
-        this.buildingNames = new ArrayList<String>(buildingNames);
+    public void addBuildingNames (String name) {
+        this.buildingNames.add(name);
     }
 
     public Map<String, String> getBldgnames () {

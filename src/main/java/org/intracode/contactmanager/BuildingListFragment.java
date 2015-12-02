@@ -2,12 +2,16 @@ package org.intracode.contactmanager;
 
 
 import android.app.Activity;
+import android.app.AlertDialog;
 import android.app.ListFragment;
 import android.content.Context;
+import android.content.DialogInterface;
 import android.content.Intent;
 import android.content.SharedPreferences;
 import android.graphics.Color;
 import android.location.Criteria;
+import android.location.Location;
+import android.location.LocationListener;
 import android.location.LocationManager;
 import android.os.AsyncTask;
 import android.os.Bundle;
@@ -20,6 +24,7 @@ import android.view.View;
 import android.view.ViewGroup;
 import android.widget.AdapterView;
 import android.widget.ArrayAdapter;
+import android.widget.Button;
 import android.widget.ImageButton;
 import android.widget.ImageView;
 import android.widget.LinearLayout;
@@ -58,6 +63,7 @@ import java.util.List;
 import java.util.Map;
 import java.util.Random;
 
+
 public class BuildingListFragment extends Fragment {
 
     private List<String> urlList = new ArrayList<String>();
@@ -68,6 +74,7 @@ public class BuildingListFragment extends Fragment {
     private ArrayList<String> buildingNamesDummy = new ArrayList<String>();
     private ArrayList<LatLng> positions = new ArrayList<LatLng>();
     private TextView busyness;
+    private ArrayList<String> favoriteList = new ArrayList<>();
     
     public  Map<String, String> bldgnames = new HashMap<String, String>();
     public  Map<String, String> bldglocs = new HashMap<String, String>();
@@ -82,7 +89,6 @@ public class BuildingListFragment extends Fragment {
     private RoundCornerProgressBar progress1;
     private ArrayAdapter<String> adapter;
     private ActionBar actionBar;
-    private GlobalVariables gv;
     private int currDate = 0;
     private int currTime = 0;
     private Calendar c;
@@ -94,10 +100,14 @@ public class BuildingListFragment extends Fragment {
     private Boolean stu = false;
     private Boolean rec = false;
     private ImageButton fa, food, study, recreation;
-
+    private boolean first = true;
+    private boolean dateS, timeS;
     private TextView favText, othText;
     private View favLine, favLine2;
     private Spinner timeSpinner, dateSpinner;
+    private boolean check = false;
+    private GlobalVariables gv;
+    private boolean distanceS, busynessS;
 
     private String API = "http://densit-api.appspot.com/locations";
     public static final String PREFS_NAME = "MyPrefsFile";
@@ -106,7 +116,7 @@ public class BuildingListFragment extends Fragment {
     private SharedPreferences settings;
 
     public interface UpdateListener {
-        public void onArticleSelected(String name, boolean check);
+        public void onArticleSelected(String name, boolean mark);
         public void onDayTimeSelected(int day, int time);
     }
 
@@ -137,6 +147,15 @@ public class BuildingListFragment extends Fragment {
         Calendar c = Calendar.getInstance();
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
         hour = c.get(Calendar.HOUR_OF_DAY);
+        busynessS = true;
+
+        gv = (GlobalVariables) getActivity().getApplication();
+        ArrayList<String> favList = gv.getBuildingNames();
+
+        for (String s:favList) {
+            favoriteList.add(s);
+        }
+
         // make api call
         String[] params = new String[2];
         params[0] = API;
@@ -193,11 +212,23 @@ public class BuildingListFragment extends Fragment {
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
 //        Toast.makeText(getActivity().getApplicationContext(), dayOfWeek, Toast.LENGTH_LONG).show();
         hour = c.get(Calendar.HOUR_OF_DAY);
+        currTime = hour;
+        currDate = dayOfWeek;
+        System.out.println("hey" + currTime + " " + currDate);
         minute = c.get(Calendar.MINUTE);
         changeList();
 //        for (Building b:buildings) {
 //            b.setBusyneesNow(b.getBusynessArray()[hour]);
 //        }
+
+        Button showPopUpButton = (Button) getActivity().findViewById(R.id.popButton);
+        showPopUpButton.setOnClickListener(new View.OnClickListener() {
+
+            @Override
+            public void onClick(View v) {
+                showPopUp2();
+            }
+        });
 
         timeSpinner = (Spinner) getActivity().findViewById(R.id.time_spinner);
             // Create an ArrayAdapter using the string array and a default spinner layout
@@ -214,17 +245,27 @@ public class BuildingListFragment extends Fragment {
                                            int position, long id) {
                     // TODO Auto-generated method stub
                     currTime = position;
+                    if (!check) {
 //                    for (Building b : buildings) {
 //                        b.setBusyneesNow(b.getBusynessArray()[currTime]);
 //                    }
-                    String[] params = new String[2];
-                    params[0] = API;
-                    params[1] = timeToT(currTime,currDate);
-                    Busyness busy = new Busyness();
-                    busy.execute(params);
 
-                    mCallback.onDayTimeSelected(dateSpinner.getSelectedItemPosition(), position);
-                    displayListView();
+                        System.out.println("called b");
+                        if (!first) {
+                            mCallback.onDayTimeSelected(dateSpinner.getSelectedItemPosition(), position);
+                        }
+
+                        String[] params = new String[2];
+                        params[0] = API;
+                        params[1] = timeToT(currTime,currDate);
+                        timeS = true;
+                        check = true;
+                        Busyness busy = new Busyness();
+                        busy.execute(params);
+
+
+    //                    displayListView();
+                    }
                 }
 
                 @Override
@@ -248,38 +289,22 @@ public class BuildingListFragment extends Fragment {
                 public void onItemSelected(AdapterView<?> parent, View view,
                                            int position, long id) {
                     // TODO Auto-generated method stub
-                    Random r = new Random();
                     currDate = position;
-                    mCallback.onDayTimeSelected(position, timeSpinner.getSelectedItemPosition());
-//                    if (currDate == 0 || currDate == 6) {
-//                        for (Building b : buildings) {
-//                            int a = r.nextInt(40) - 20;
-//                            if ((b.getBusynessArray()[currTime])/2 - a < 0) {
-//                                a = 0;
-//                            } else {
-//                                a = ((b.getBusynessArray()[currTime]) - a)/2;
-//                            }
-//                            b.setBusyneesNow(a);
-//                        }
-//                        displayListView2();
-//                    } else {
-//                        for (Building b : buildings) {
-//                            int a = r.nextInt(40) - 20;
-//                            if (b.getBusynessArray()[currTime] - a < 0) {
-//                                a = 0;
-//                            } else {
-//                                a = b.getBusynessArray()[currTime] - a;
-//                            }
-//                            b.setBusyneesNow(a);
-//                        }
-//                        displayListView2();
-//                    }
-                    String[] params = new String[2];
-                    params[0] = API;
-                    params[1] = timeToT(hour,dayOfWeek);
-                    Busyness busy = new Busyness();
-                    busy.execute(params);
-                    displayListView2();
+                    if (!check) {
+
+                        System.out.println("called b2");
+                        if (!first) {
+                            mCallback.onDayTimeSelected(position, timeSpinner.getSelectedItemPosition());
+                        }
+
+                        check = true;
+                        String[] params = new String[2];
+                        params[0] = API;
+                        params[1] = timeToT(currTime,currDate);
+                        dateS = true;
+                        Busyness busy = new Busyness();
+                        busy.execute(params);
+                    }
                 }
 
                 @Override
@@ -306,6 +331,7 @@ public class BuildingListFragment extends Fragment {
 
                 }
                 displayListView();
+//                displayListView();
 
             }
         });
@@ -348,7 +374,7 @@ public class BuildingListFragment extends Fragment {
         ViewStudy();
         stu = true;
         study.setImageResource(R.drawable.study_selected);
-        displayListView();
+//        displayListView();
 //
         }
 
@@ -357,7 +383,7 @@ public class BuildingListFragment extends Fragment {
     public View onCreateView(LayoutInflater inflater, ViewGroup container,
             Bundle savedInstanceState) {
             if (container == null) {
-            return null;
+                return null;
             }
             View view = inflater.inflate(R.layout.fragment_buildinglist, container, false);
 
@@ -400,10 +426,6 @@ public class BuildingListFragment extends Fragment {
 
     private void displayListView() {
         changeList();
-//        System.out.println("Favorite " +buildingNamesFavorite);
-//        System.out.println("Suggest " +buildingNamesSuggestion);
-//        System.out.println("Others " +buildingNamesOthers);
-
         buildingNamesDummy.clear();
         buildingNamesDummy.addAll(buildingNamesFavorite);
         adapter = new LocationListAdapter(getActivity(), R.layout.listview_item, buildingNamesFavorite);
@@ -411,13 +433,27 @@ public class BuildingListFragment extends Fragment {
         listViewFavorite.setAdapter(adapter);
 //        listView.setTextFilterEnabled(true);
 //        listView.setOnItemClickListener(new BLDGOnClickListener());
-//        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View view, int position,
-//                                    long id) {
-//                Log.d("ID", Integer.toString(position));
-//            }
-//        };
-//        listViewFavorite.setOnItemClickListener(listener);
+        AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                Log.d("ID", Integer.toString(position));
+                String name = (String) parent.getItemAtPosition(position);
+                System.out.println("hello" + name);
+                Intent i = new Intent(getActivity(), BusynessActivity.class);
+                i.putExtra("NAME", name);
+                for (Building b:buildingsFinal) {
+                    System.out.println("buildings " + name);
+                    if (b.getName().equals(name)) {
+                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+                        i.putExtra("ID", b.getId());
+                        i.putExtra("LAT", b.getLat());
+                        i.putExtra("LON", b.getLon());
+                    }
+                }
+                startActivity(i);
+            }
+        };
+        listViewFavorite.setOnItemClickListener(listener);
 
 
         buildingNamesDummy.clear();
@@ -427,13 +463,29 @@ public class BuildingListFragment extends Fragment {
         listViewSuggestion.setAdapter(adapter);
 //        listView.setTextFilterEnabled(true);
 //        listView.setOnItemClickListener(new BLDGOnClickListener());
-//        AdapterView.OnItemClickListener listener2 = new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View view, int position,
-//                                    long id) {
-//                Log.d("ID", Integer.toString(position));
-//            }
-//        };
-//        listViewSuggestion.setOnItemClickListener(listener2);
+        AdapterView.OnItemClickListener listener2 = new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                Log.d("ID", Integer.toString(position));
+                String name = (String) parent.getItemAtPosition(position);
+                System.out.println("hello" + name);
+                Intent i = new Intent(getActivity(), BusynessActivity.class);
+                i.putExtra("NAME", name);
+                for (Building b:buildingsFinal) {
+                    System.out.println("buildings " + name);
+                    if (b.getName().equals(name)) {
+                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+                        i.putExtra("ID", b.getId());
+                        i.putExtra("LAT", b.getLat());
+                        i.putExtra("LON", b.getLon());
+                    }
+                }
+                startActivity(i);
+//
+//                }
+            }
+        };
+        listViewSuggestion.setOnItemClickListener(listener2);
 
 
         buildingNamesDummy.clear();
@@ -443,13 +495,28 @@ public class BuildingListFragment extends Fragment {
         listViewOthers.setAdapter(adapter);
 //        listView.setTextFilterEnabled(true);
 //        listView.setOnItemClickListener(new BLDGOnClickListener());
-//        AdapterView.OnItemClickListener listener3 = new AdapterView.OnItemClickListener() {
-//            public void onItemClick(AdapterView<?> parent, View view, int position,
-//                                    long id) {
-//                Log.d("ID", Integer.toString(position));
-//            }
-//        };
-//        listViewOthers.setOnItemClickListener(listener3);
+        AdapterView.OnItemClickListener listener3 = new AdapterView.OnItemClickListener() {
+            public void onItemClick(AdapterView<?> parent, View view, int position,
+                                    long id) {
+                Log.d("ID", Integer.toString(position));
+                String name = (String) parent.getItemAtPosition(position);
+                System.out.println("hello" + name);
+                Intent i = new Intent(getActivity(), BusynessActivity.class);
+                i.putExtra("NAME", name);
+                for (Building b:buildingsFinal) {
+                    System.out.println("buildings " + name);
+                    if (b.getName().equals(name)) {
+                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+                        i.putExtra("ID", b.getId());
+                        i.putExtra("LAT", b.getLat());
+                        i.putExtra("LON", b.getLon());
+                    }
+                }
+                startActivity(i);
+            }
+        };
+        listViewOthers.setOnItemClickListener(listener3);
+
 
 
 
@@ -510,6 +577,20 @@ public class BuildingListFragment extends Fragment {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
                 Log.d("ID", Integer.toString(position));
+                String name = (String) parent.getItemAtPosition(position);
+                System.out.println("hello" + name);
+                Intent i = new Intent(getActivity(), BusynessActivity.class);
+                i.putExtra("NAME", name);
+                for (Building b:buildingsFinal) {
+                    System.out.println("buildings " + name);
+                    if (b.getName().equals(name)) {
+                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+                        i.putExtra("ID", b.getId());
+                        i.putExtra("LAT", b.getLat());
+                        i.putExtra("LON", b.getLon());
+                    }
+                }
+                startActivity(i);
             }
         };
         listViewFavorite.setOnItemClickListener(listener);
@@ -588,7 +669,7 @@ public class BuildingListFragment extends Fragment {
 //            String buildingName = buildingNames.get(position);
 //            Log.d("NAMES", buildingName);
 //            final Building b = buildings.get(position);
-            for (Building temp : buildings){
+            for (Building temp : buildingsFinal){
                 if (temp.getName() == buildingNamesFavorite.get(position)){
                     final Building b = temp;
                     name = (TextView) view.findViewById(R.id.buildingName);
@@ -605,7 +686,7 @@ public class BuildingListFragment extends Fragment {
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
-                    if (percent < 30) {
+                    if (percent < 35) {
                         progress1.setProgressColor(Color.parseColor("#86BA4B"));
                     } else if (percent < 70) {
                         progress1.setProgressColor(Color.parseColor("#F29317"));
@@ -632,6 +713,7 @@ public class BuildingListFragment extends Fragment {
 //                                editor.putBoolean(b.getName(), false);
 //                                editor.commit();
                                 mCallback.onArticleSelected(b.getName(), false);
+                                favoriteList.remove(b.getName());
                                 displayListView();
                             } else {
                                 b.setFavorite();
@@ -641,6 +723,7 @@ public class BuildingListFragment extends Fragment {
 //                                editor.putBoolean(b.getName(), true);
 //                                editor.commit();
                                 mCallback.onArticleSelected(b.getName(), true);
+                                favoriteList.add(b.getName());
                                 displayListView();
                             }
                         }
@@ -666,7 +749,7 @@ public class BuildingListFragment extends Fragment {
 //            String buildingName = buildingNames.get(position);
 //            Log.d("NAMES", buildingName);
 //            final Building b = buildings.get(position);
-            for (Building temp : buildings){
+            for (Building temp : buildingsFinal){
                 if (temp.getName() == buildingNamesSuggestion.get(position)){
                     final Building b = temp;
                     name = (TextView) view.findViewById(R.id.buildingName);
@@ -683,7 +766,7 @@ public class BuildingListFragment extends Fragment {
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
-                    if (percent < 30) {
+                    if (percent < 35) {
                         progress1.setProgressColor(Color.parseColor("#86BA4B"));
                     } else if (percent < 70) {
                         progress1.setProgressColor(Color.parseColor("#F29317"));
@@ -709,6 +792,7 @@ public class BuildingListFragment extends Fragment {
 //                                SharedPreferences.Editor editor = getActivity().getSharedPreferences(PREFS_NAME, 0).edit();
 //                                editor.putBoolean(b.getName(), false);
 //                                editor.commit();
+                                favoriteList.remove(b.getName());
                                 mCallback.onArticleSelected(b.getName(), false);
                                 displayListView();
                             } else {
@@ -718,6 +802,7 @@ public class BuildingListFragment extends Fragment {
 //                                SharedPreferences.Editor editor = getActivity().getSharedPreferences(PREFS_NAME, 0).edit();
 //                                editor.putBoolean(b.getName(), true);
 //                                editor.commit();
+                                favoriteList.add(b.getName());
                                 mCallback.onArticleSelected(b.getName(), true);
                                 displayListView();
                             }
@@ -743,7 +828,7 @@ public class BuildingListFragment extends Fragment {
 //            String buildingName = buildingNames.get(position);
 //            Log.d("NAMES", buildingName);
 //            final Building b = buildings.get(position);
-            for (Building temp : buildings){
+            for (Building temp : buildingsFinal){
                 if (temp.getName() == buildingNamesOthers.get(position)){
                     final Building b = temp;
                     name = (TextView) view.findViewById(R.id.buildingName);
@@ -760,7 +845,7 @@ public class BuildingListFragment extends Fragment {
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
-                    if (percent < 30) {
+                    if (percent < 35) {
                         progress1.setProgressColor(Color.parseColor("#86BA4B"));
                     } else if (percent < 70) {
                         progress1.setProgressColor(Color.parseColor("#F29317"));
@@ -787,6 +872,7 @@ public class BuildingListFragment extends Fragment {
 //                                SharedPreferences.Editor editor = getActivity().getSharedPreferences(PREFS_NAME, 0).edit();
 //                                editor.putBoolean(b.getName(), false);
 //                                editor.commit();
+                                favoriteList.remove(b.getName());
                                 mCallback.onArticleSelected(b.getName(), false);
                                 displayListView();
                             } else if (!b.getFavorite()) {
@@ -795,6 +881,7 @@ public class BuildingListFragment extends Fragment {
 //                                SharedPreferences.Editor editor = getActivity().getSharedPreferences(PREFS_NAME, 0).edit();
 //                                editor.putBoolean(b.getName(), true);
 //                                editor.commit();
+                                favoriteList.add(b.getName());
                                 mCallback.onArticleSelected(b.getName(), true);
                                 displayListView();
                             }
@@ -839,7 +926,7 @@ public class BuildingListFragment extends Fragment {
 //            String buildingName = buildingNames.get(position);
 //            Log.d("NAMES", buildingName);
 //            final Building b = buildings.get(position);
-            for (Building temp : buildings){
+            for (Building temp : buildingsFinal){
                 if (temp.getName() == buildingNamesFavorite.get(position)){
                     final Building b = temp;
                     name = (TextView) view.findViewById(R.id.buildingName);
@@ -855,7 +942,7 @@ public class BuildingListFragment extends Fragment {
 //            busyness = (TextView) view.findViewById(R.id.busyness);
 //            busyness.setText(Integer.toString(percent) + "%");
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
-                    if (percent < 30) {
+                    if (percent < 35) {
                         progress1.setProgressColor(Color.parseColor("#86BA4B"));
                     } else if (percent < 70) {
                         progress1.setProgressColor(Color.parseColor("#F29317"));
@@ -878,12 +965,14 @@ public class BuildingListFragment extends Fragment {
                             if (b.getFavorite()){
                                 b.setFavorite();
                                 iv.setImageResource(R.drawable.unfavourite);
+                                favoriteList.remove(b.getName());
                                 mCallback.onArticleSelected(b.getName(), false);
                                 displayListView();
                             } else {
                                 b.setFavorite();
                                 Log.d("POS", Integer.toString(iv.getId()));
                                 iv.setImageResource(R.drawable.favourite);
+                                favoriteList.add(b.getName());
                                 mCallback.onArticleSelected(b.getName(), false);
                                 displayListView();
                             }
@@ -915,7 +1004,7 @@ public class BuildingListFragment extends Fragment {
 //                    int[] times = b.getBusynessArray();
                     percent = b.getBusynessNow();
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
-                    if (percent < 30) {
+                    if (percent < 35) {
                         progress1.setProgressColor(Color.parseColor("#86BA4B"));
                     } else if (percent < 70) {
                         progress1.setProgressColor(Color.parseColor("#F29317"));
@@ -935,12 +1024,14 @@ public class BuildingListFragment extends Fragment {
                             if (b.getFavorite()){
                                 b.setFavorite();
                                 iv.setImageResource(R.drawable.unfavourite);
+                                favoriteList.remove(b.getName());
                                 mCallback.onArticleSelected(b.getName(), false);
                                 displayListView();
                             } else {
                                 b.setFavorite();
                                 Log.d("POS", Integer.toString(iv.getId()));
                                 iv.setImageResource(R.drawable.favourite);
+                                favoriteList.add(b.getName());
                                 mCallback.onArticleSelected(b.getName(), true);
                                 displayListView();
                             }
@@ -972,7 +1063,7 @@ public class BuildingListFragment extends Fragment {
 //                    int[] times = b.getBusynessArray();
                     percent = b.getBusynessNow();
                     progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress);
-                    if (percent < 30) {
+                    if (percent < 35) {
                         progress1.setProgressColor(Color.parseColor("#86BA4B"));
                     } else if (percent < 70) {
                         progress1.setProgressColor(Color.parseColor("#F29317"));
@@ -996,11 +1087,13 @@ public class BuildingListFragment extends Fragment {
                             if (b.getFavorite()){
                                 b.setFavorite();
                                 iv.setImageResource(R.drawable.unfavourite);
+                                favoriteList.remove(b.getName());
                                 mCallback.onArticleSelected(b.getName(), false);
                                 displayListView();
                             } else if (!b.getFavorite()) {
                                 b.setFavorite();
                                 iv.setImageResource(R.drawable.favourite);
+                                favoriteList.add(b.getName());
                                 mCallback.onArticleSelected(b.getName(), true);
                                 displayListView();
                             }
@@ -1013,37 +1106,107 @@ public class BuildingListFragment extends Fragment {
     }
 
     public void changeList() {
-        int lowest = 100;
-        String lowestName ="";
-        buildingNamesFavorite.clear();
-        buildingNamesOthers.clear();
-        buildingNamesSuggestion.clear();
-        for (Building b: buildings) {
-            for (String name:buildingNames) {
-                if (b.getName() == name) {
-                    if (lowest > b.getBusynessNow()) {
-                        lowest = b.getBusynessNow();
-                        lowestName = name;
+        if (distanceS) {
+            buildingNamesFavorite.clear();
+            buildingNamesOthers.clear();
+            buildingNamesSuggestion.clear();
+            LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+            // get the last know location from your location manager.
+            Location location= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+            // now get the lat/lon from the location and do something with it.
+            double curLat = location.getLatitude();
+            double curLon = location.getLongitude();
+            float maxDistance = 0f;
+//            Location loc1 = new Location("");
+//            loc1.setLatitude(lat1);
+//            loc1.setLongitude(lon1);
+//
+//            Location loc2 = new Location("");
+//            loc2.setLatitude(lat2);
+//            loc2.setLongitude(lon2);
+
+            for (Building b: buildingsFinal) {
+                for (String name:buildingNames) {
+                    if (b.getName() == name) {
+                        Location loc = new Location("");
+                        loc.setLatitude(b.getLat());
+                        loc.setLongitude(b.getLon());
+                        double dist = location.distanceTo(loc);
+                        if (maxDistance > dist) {
+                            maxDistance = b.getBusynessNow();
+//                            lowestName = name;
+                        }
+                    }
+                }
+            }
+            double lowestD = 1;
+            String lowestName ="";
+            for (Building b: buildingsFinal) {
+                for (String name:buildingNames) {
+                    if (b.getName() == name) {
+                        Location loc = new Location("");
+                        loc.setLatitude(b.getLat());
+                        loc.setLongitude(b.getLon());
+                        double dist = location.distanceTo(loc);
+
+                        double math = Math.pow((b.getBusynessNow() / 100),2) + Math.pow((dist / maxDistance), 2);
+                        if (lowestD > math) {
+                            lowestD = math;
+                            lowestName = name;
+                        }
+                    }
+                }
+            }
+            buildingNamesSuggestion.add(lowestName);
+            for (Building b: buildingsFinal) {
+                for (String name:buildingNames) {
+                    if (b.getName() == name) {
+                        if (b.getFavorite()) {
+                            if (b.getName() != lowestName) {
+                                buildingNamesFavorite.add(b.getName());
+                            }
+                        } else {
+                            if (b.getName() != lowestName) {
+                                buildingNamesOthers.add(b.getName());
+                            }
+                        }
+                    }
+                }
+            }
+        } else if (busynessS) {
+            int lowest = 100;
+            String lowestName ="";
+            buildingNamesFavorite.clear();
+            buildingNamesOthers.clear();
+            buildingNamesSuggestion.clear();
+            for (Building b: buildingsFinal) {
+                for (String name:buildingNames) {
+                    if (b.getName() == name) {
+                        if (lowest > b.getBusynessNow()) {
+                            lowest = b.getBusynessNow();
+                            lowestName = name;
+                        }
+                    }
+                }
+            }
+            buildingNamesSuggestion.add(lowestName);
+            for (Building b: buildingsFinal) {
+                for (String name:buildingNames) {
+                    if (b.getName() == name) {
+                        if (b.getFavorite()) {
+                            if (b.getName() != lowestName) {
+                                buildingNamesFavorite.add(b.getName());
+                            }
+                        } else {
+                            if (b.getName() != lowestName) {
+                                buildingNamesOthers.add(b.getName());
+                            }
+                        }
                     }
                 }
             }
         }
-        buildingNamesSuggestion.add(lowestName);
-        for (Building b: buildings) {
-            for (String name:buildingNames) {
-                if (b.getName() == name) {
-                    if (b.getFavorite()) {
-                        if (b.getName() != lowestName) {
-                            buildingNamesFavorite.add(b.getName());
-                        }
-                    } else {
-                        if (b.getName() != lowestName) {
-                            buildingNamesOthers.add(b.getName());
-                        }
-                    }
-                }
-            }
-        }
+
 
 
     }
@@ -1061,8 +1224,20 @@ public class BuildingListFragment extends Fragment {
 //        cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 15.0f);
 //        map.animateCamera(cameraUpdate);
         // update the view
+
         dateSpinner.setSelection(day);
         timeSpinner.setSelection(time);
+        if (!check) {
+            String[] params = new String[2];
+            params[0] = API;
+            params[1] = timeToT(currTime,currDate);
+            dateS = true;
+            Busyness busy = new Busyness();
+//            System.out.println("here");
+            busy.execute(params);
+        }
+
+
     }
 
     class Wrapper
@@ -1099,7 +1274,7 @@ public class BuildingListFragment extends Fragment {
             }
             String result = convertStreamToString(in);
 
-            Log.d("API", result);
+//            Log.d("API", result);
             Wrapper w = new Wrapper();
             w.numOfParams = paramLength;
             w.result = result;
@@ -1215,54 +1390,98 @@ public class BuildingListFragment extends Fragment {
         }
 
         protected void onPostExecute(Wrapper w) {
-//            Intent intent = new Intent(getApplicationContext(), BuildingListFragment.class);
-//
-//            intent.putExtra(EXTRA_MESSAGE, result);
-//
-//            startActivity(intent);
-//            testPrint.setText(result);
 
-//            if (w.numOfParams == 1)   {
             getLocations(w.result);
-            Log.d("BLDG", buildingsFinal.toString());
-//            buildingNames.clear();
-//            for (Map.Entry<String, String> entry : bldgbusyness.entrySet()) {
-////                Log.d("MAPPING", bldgnames.get(entry.getKey()));
-//                buildingNames.add(entry.getKey());
-//            }
-////            getBusynessAtTime(w.result);
-//
-//            Log.d("bldgnames", "Buildings " + bldgnames);
-//            Log.d("bldgbusyness", "Buildbusyness " + bldgbusyness);
-//            Log.d("bldglocs", "Buildbldglocs " + bldglocs);
-//            Log.d("buildingNames", "Builddmanes " + buildingNames);
-//            Log.d("busynessTemp", "BuildTemp " + busynessTemp);
-//            gb.addBldglocs(bldglocs);
-//            gb.addBusynessTemp(busynessTemp);
-//            gb.addBldgames(bldgnames);
-//            gb.addBuildingNames(buildingNames);
-//            gb.addBldgames(bldgnames);
-//            if (w.numOfParams == 2)
-//            if (w.numOfParams == 4)
-//            buildingNames.clear();
-//            for (Map.Entry<String, String> entry : bldgbusyness.entrySet())
-//            {
-////                Log.d("MAPPING", bldgnames.get(entry.getKey()));
-//                buildingNames.add(entry.getKey());
-//            }
-//            gb = (GlobalVariables) getApplication();
-//            gb.addBldglocs(bldglocs);
-//            gb.addBusynessTemp(busynessTemp);
-//            gb.addBldgames(bldgnames);
-//            gb.addBuildingNames(buildingNames);
-//            gb.addBldgames(bldgnames);
-//
-//
-//
-//            Intent i = new Intent(SplashActivity.this, MainActivity.class);
-//
-//            startActivity(i);
-
+            for (Building b: buildingsFinal) {
+                Log.d("BLDG2", b.getName()+ "  " + b.getBusynessNow());
+                for (String s: favoriteList) {
+                    if (b.getName().equals(s)) {
+                        b.setFavorite();
+                    }
+                }
+            }
+            if (first) {
+                study.performClick();
+                first = false;
+            } else {
+                if (timeS) {
+                    if (stu) {
+                        stu = false;
+                        study.performClick();
+                    } else if (foo) {
+                        foo = false;
+                        food.performClick();
+                    } else if (rec) {
+                        rec = false;
+                        recreation.performClick();
+                    }
+                    timeS = false;
+                } else if (dateS) {
+                    if (stu) {
+                        stu = false;
+                        study.performClick();
+                    } else if (foo) {
+                        foo = false;
+                        food.performClick();
+                    } else if (rec) {
+                        rec = false;
+                        recreation.performClick();
+                    }
+                    dateS = false;
+                }
+            }
+            check = false;
         }
+    }
+
+    private void showPopUp2() {
+
+        AlertDialog.Builder helpBuilder = new AlertDialog.Builder(getActivity());
+        helpBuilder.setTitle("Suggestion Setting");
+        helpBuilder.setMessage("Select Preference Suggestion Setting");
+        helpBuilder.setPositiveButton("By Busyness",
+                new DialogInterface.OnClickListener() {
+
+                    public void onClick(DialogInterface dialog, int which) {
+                        // Do nothing but close the dialog
+                        busynessS = true;
+                        distanceS = false;
+                        if (stu) {
+                            stu = false;
+                            study.performClick();
+                        } else if (foo) {
+                            foo = false;
+                            food.performClick();
+                        } else if (rec) {
+                            rec = false;
+                            recreation.performClick();
+                        }
+                    }
+                });
+
+        helpBuilder.setNegativeButton("By Distance", new DialogInterface.OnClickListener() {
+
+            @Override
+            public void onClick(DialogInterface dialog, int which) {
+                // Do nothing
+                busynessS = true;
+                distanceS = false;
+                if (stu) {
+                    stu = false;
+                    study.performClick();
+                } else if (foo) {
+                    foo = false;
+                    food.performClick();
+                } else if (rec) {
+                    rec = false;
+                    recreation.performClick();
+                }
+            }
+        });
+
+        // Remember, create doesn't show the dialog
+        AlertDialog helpDialog = helpBuilder.create();
+        helpDialog.show();
+
     }
 }

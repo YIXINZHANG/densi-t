@@ -12,10 +12,12 @@ import android.graphics.Paint;
 import android.location.Criteria;
 import android.location.Location;
 import android.location.LocationManager;
+import android.os.AsyncTask;
 import android.os.Bundle;
 import android.support.v4.app.Fragment;
 import android.support.v7.app.ActionBar;
 import android.support.v7.app.ActionBarActivity;
+import android.util.Log;
 import android.view.LayoutInflater;
 import android.view.View;
 import android.view.ViewGroup;
@@ -37,7 +39,17 @@ import com.google.android.gms.maps.model.Marker;
 import com.google.android.gms.maps.model.MarkerOptions;
 
 import org.intracode.contactmanager.R;
+import org.json.JSONArray;
+import org.json.JSONException;
+import org.json.JSONObject;
 
+import java.io.BufferedInputStream;
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStream;
+import java.io.InputStreamReader;
+import java.net.HttpURLConnection;
+import java.net.URL;
 import java.text.DecimalFormat;
 import java.util.ArrayList;
 import java.util.Calendar;
@@ -69,6 +81,8 @@ public class MapFragment extends Fragment {
     private ArrayList<String> buildingNames = new ArrayList<String>();
     private ArrayList<LatLng> positions = new ArrayList<LatLng>();
     private ArrayList<Marker> mapMarker = new ArrayList<Marker>();
+    public  Map<String, String> bldgbusyness = new HashMap<String, String>();
+    public  Map<String, String> busynessTemp = new HashMap<String, String>();
     UpdateListener2 mCallback2;
     private Calendar c;
     private int dayOfWeek;
@@ -79,9 +93,13 @@ public class MapFragment extends Fragment {
     private Marker md;
     private ArrayList<Marker> mdList = new ArrayList<Marker>();
     private Spinner dateSpinner, timeSpinner;
+    private String API = "http://densit-api.appspot.com/locations";
 
     private boolean study, food, rec;
-
+    private boolean first = true;
+    private boolean dateS, timeS;
+    private boolean check;
+    private float dZoom = 15.1f;
     public interface UpdateListener2 {
         public void onDayTimeSelected2(int date, int day);
     }
@@ -110,83 +128,19 @@ public class MapFragment extends Fragment {
         mapView = (MapView) fragment.findViewById(R.id.mapView);
         mapView.onCreate(savedInstanceState);
 
-//        c = Calendar.getInstance();
-//        dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-//        hour = c.get(Calendar.HOUR_OF_DAY);
-//        minute = c.get(Calendar.MINUTE);
-
-        parentActivity = getActivity();
-        buildingNames.add("Culc");
-        positions.add(new LatLng(33.774599, -84.396372));
-
-        buildingNames.add("Student Center");
-        positions.add(new LatLng(33.774028, -84.398818));
-
-        buildingNames.add("Library");
-        positions.add(new LatLng(33.774327, -84.395825));
-
-        buildingNames.add("CRC");
-        positions.add(new LatLng(33.77562, -84.403753));
-
-        buildingNames.add("Klaus");
-        positions.add(new LatLng(33.777212,-84.396281));
-
-        buildingNames.add("CoC");
-        positions.add(new LatLng(33.777386,-84.39738));
-
-        int[] t1 = {21,18,10,7,5,5,10,29,38,58,73,85,87,83,71,53,46,42,62,65,53,51,42,36};
-        int[] t2 = {18,10,4,2,3,4,9,24,34,49,73,87,93,81,67,42,37,39,44,31,26,27,23,20};
-        int[] t3 = {32,25,11,8,6,5,4,22,29,32,42,59,62,78,75,61,73,55,78,72,64,58,47,39};
-        int[] t4 = {0,0,0,0,25,34,30,21,29,35,33,28,39,35,49,52,67,61,72,74,13,2,0,0};
-        int[] t5 = {19,17,11,6,4,5,8,28,37,56,68,71,70,68,65,59,42,38,40,43,47,36,31,20};
-        int[] t6 = {24,19,15,9,4,5,5,25,42,51,62,87,82,71,65,61,44,41,43,49,39,37,31,29};
-
-
-        Building newBuilding1 = new Building("1","Culc", 33.774599, -84.396372, 39,  true, false, true, false);
-        Building newBuilding2 = new Building("2","Student Center", 33.774028, -84.398818, 35,  true, true, true, true);
-        Building newBuilding3 = new Building("3","Library", 33.774327, -84.395825, 31,  false, false, true, false);
-        Building newBuilding4 = new Building("4","CRC", 33.77562, -84.403753, 46,  true, true, false, true);
-        Building newBuilding5 = new Building("5","Klaus", 33.777212, -84.396281, 33,  false, false, true, false);
-        Building newBuilding6 = new Building("6","CoC", 33.777386, -84.396281, 52,  false, true, true, false);
-        buildings.add(newBuilding1);
-        buildings.add(newBuilding2);
-        buildings.add(newBuilding3);
-        buildings.add(newBuilding4);
-        buildings.add(newBuilding5);
-        buildings.add(newBuilding6);
-
-
-
-
-
         c = Calendar.getInstance();
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        System.out.println(dayOfWeek);
-//        Toast.makeText(getActivity().getApplicationContext(), dayOfWeek, Toast.LENGTH_LONG).show();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
+        currTime = hour;
+        currDate = dayOfWeek;
 
-//        for (Building b:buildings) {
-//            b.setBusyneesNow(b.getBusynessArray()[hour]);
-//        }
+        parentActivity = getActivity();
 
-//        allButton = (Button) fragment.findViewById(R.id.buttonAll);
         foodButton = (ImageButton) fragment.findViewById(R.id.buttonFood);
         studyButton = (ImageButton) fragment.findViewById(R.id.buttonStudy);
         recButton = (ImageButton) fragment.findViewById(R.id.buttonRec);
-//        favButton = (ImageButton) fragment.findViewById(R.id.buttonFavorite);
 
-//        allButton.setOnClickListener(new View.OnClickListener() {
-//            @Override
-//            public void onClick(View view) {
-//                foodButton.setImageResource(R.drawable.food);
-//                studyButton.setImageResource(R.drawable.study);
-//                recButton.setImageResource(R.drawable.recreation);
-//                favButton.setImageResource(R.drawable.favourite);
-//                updateAllView();
-//
-//            }
-//        });
         foodButton.setOnClickListener(new View.OnClickListener() {
             @Override
             public void onClick(View view) {
@@ -247,48 +201,19 @@ public class MapFragment extends Fragment {
         map.setMyLocationEnabled(true);
         map.setMapType(GoogleMap.MAP_TYPE_NORMAL);
 
-        ArrayList<Double> lat = new ArrayList<Double>();
-        ArrayList<Double> lon = new ArrayList<Double>();
-        for (int i=0; i < positions.size(); i++) {
-            lat.add(positions.get(i).latitude);
-            lon.add(positions.get(i).longitude);
-        }
-        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
-        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
-        LatLng newPosition = new LatLng(newLat,newLon);
-        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, 15.5f);
-        map.animateCamera(cameraUpdate);
-        mdList.clear();
-        for (int i=0; i < positions.size(); i++) {
-//            map.addMarker(new MarkerOptions().position(positions.get(i))
-//                            .title(buildingNames.get(i)));
-            ////
-            ///
-            if (buildings.get(i).getBusynessNow() < 35) {
-                md = map.addMarker(new MarkerOptions()
-                        .position(positions.get(i))
-                        .title(buildingNames.get(i))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
-            } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                md = map.addMarker(new MarkerOptions()
-                        .position(positions.get(i))
-                        .title(buildingNames.get(i))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
-            } else {
-                md = map.addMarker(new MarkerOptions()
-                        .position(positions.get(i))
-                        .title(buildingNames.get(i))
-                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
-            }
-            mdList.add(md);
-        }
-
         map.setOnInfoWindowClickListener(new WindowHandler());
+        study = true;
         studyButton.setImageResource(R.drawable.study_selected);
 
         foodButton.setImageResource(R.drawable.food);
         recButton.setImageResource(R.drawable.recreation);
-        updateStudyView();
+//        updateStudyView();
+
+        String[] params = new String[2];
+        params[0] = API;
+        params[1] = timeToT(hour,dayOfWeek);
+        Busyness busy = new Busyness();
+        busy.execute(params);
         return fragment;
 
     }
@@ -300,6 +225,8 @@ public class MapFragment extends Fragment {
 //        Toast.makeText(getActivity().getApplicationContext(), dayOfWeek, Toast.LENGTH_LONG).show();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
+        currTime = hour;
+        currDate = dayOfWeek;
 
         timeSpinner = (Spinner) view.findViewById(R.id.time_spinner2);
         // Create an ArrayAdapter using the string array and a default spinner layout
@@ -316,16 +243,28 @@ public class MapFragment extends Fragment {
                                        int position, long id) {
                 // TODO Auto-generated method stub
                 currTime = position;
+                if (!check) {
 //                for (Building b : buildings) {
 //                    b.setBusyneesNow(b.getBusynessArray()[currTime]);
 //                }
-                mCallback2.onDayTimeSelected2(dateSpinner.getSelectedItemPosition(), position);
-                if (study) {
-                    updateStudyView();
-                } else if (food) {
-                    updateFoodView();
-                } else if (rec) {
-                    updateRecView();
+
+                    mCallback2.onDayTimeSelected2(dateSpinner.getSelectedItemPosition(), position);
+                    System.out.println("calling");
+                    check = true;
+                    String[] params = new String[2];
+                    params[0] = API;
+                    params[1] = timeToT(currTime,currDate);
+                    timeS = true;
+                    check = true;
+                    Busyness busy = new Busyness();
+                    busy.execute(params);
+//                    if (study) {
+//                        updateStudyView();
+//                    } else if (food) {
+//                        updateFoodView();
+//                    } else if (rec) {
+//                        updateRecView();
+//                    }
                 }
             }
 
@@ -351,39 +290,52 @@ public class MapFragment extends Fragment {
                                        int position, long id) {
                 // TODO Auto-generated method stub
                 currDate = position;
-                if (currDate == 0 || currDate == 6) {
-                    for (Building b : buildings) {
-                        Random r = new Random();
-                        int a = r.nextInt(40) - 20;
-//                        if ((b.getBusynessArray()[currTime])/2 - a < 0) {
-//                            a = 0;
-//                        } else {
-//                            a = ((b.getBusynessArray()[currTime]) - a)/2;
+                if (!check) {
+//                    if (currDate == 0 || currDate == 6) {
+//                        for (Building b : buildings) {
+//                            Random r = new Random();
+//                            int a = r.nextInt(40) - 20;
+////                        if ((b.getBusynessArray()[currTime])/2 - a < 0) {
+////                            a = 0;
+////                        } else {
+////                            a = ((b.getBusynessArray()[currTime]) - a)/2;
+////                        }
+//                            b.setBusyneesNow(a);
 //                        }
-                        b.setBusyneesNow(a);
-                    }
-                    System.out.println("weekend");
-                } else {
-                    for (Building b : buildings) {
-                        Random r = new Random();
-                        int a = r.nextInt(40) - 20;
-//                        if (b.getBusynessArray()[currTime] - a < 0) {
-//                            a = 0;
-//                        } else {
-//                            a = b.getBusynessArray()[currTime] - a;
-//                            System.out.println(a);
+//                        System.out.println("weekend");
+//                    } else {
+//                        for (Building b : buildings) {
+//                            Random r = new Random();
+//                            int a = r.nextInt(40) - 20;
+////                        if (b.getBusynessArray()[currTime] - a < 0) {
+////                            a = 0;
+////                        } else {
+////                            a = b.getBusynessArray()[currTime] - a;
+////                            System.out.println(a);
+////                        }
+//                            b.setBusyneesNow(a);
 //                        }
-                        b.setBusyneesNow(a);
-                    }
+//                    }
+                    
+                    mCallback2.onDayTimeSelected2(position, timeSpinner.getSelectedItemPosition());
+                    System.out.println("calling2");
+                    check = true;
+//                    if (study) {
+//                        updateStudyView();
+//                    } else if (food) {
+//                        updateFoodView();
+//                    } else if (rec) {
+//                        updateRecView();
+//                    }
+                    String[] params = new String[2];
+                    params[0] = API;
+                    params[1] = timeToT(currTime,currDate);
+                    timeS = true;
+                    check = true;
+                    Busyness busy = new Busyness();
+                    busy.execute(params);
                 }
-                if (study) {
-                    updateStudyView();
-                } else if (food) {
-                    updateFoodView();
-                } else if (rec) {
-                    updateRecView();
-                }
-                mCallback2.onDayTimeSelected2(position, timeSpinner.getSelectedItemPosition());
+
 //                displayListView();
             }
 
@@ -400,14 +352,17 @@ public class MapFragment extends Fragment {
 //        cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 15.0f);
 //        map.animateCamera(cameraUpdate);
         // update the view
+        System.out.println("check " +  check);
         dateSpinner.setSelection(day);
         timeSpinner.setSelection(time);
-        if (study) {
-            updateStudyView();
-        } else if (food) {
-            updateFoodView();
-        } else if (rec) {
-            updateRecView();
+        if (!check) {
+            if (study) {
+                updateStudyView();
+            } else if (food) {
+                updateFoodView();
+            } else if (rec) {
+                updateRecView();
+            }
         }
     }
 
@@ -447,6 +402,12 @@ public class MapFragment extends Fragment {
 
     }
 
+    public String timeToT(int hour, int day) {
+        int res = (day*24+hour)*60;
+        Log.d("TIME", Integer.toString(res));
+        return Integer.toString(res);
+    }
+
     private class WindowHandler implements GoogleMap.OnInfoWindowClickListener {
 
         @Override
@@ -459,52 +420,11 @@ public class MapFragment extends Fragment {
             String name = "Something"; // please add the name of building
             String id = "ID"; // add the ID
             ///////////////////////////////////////////////////////////////////////////
-            actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
-            actionBar.setSelectedNavigationItem(1);
+//            actionBar = ((ActionBarActivity)getActivity()).getSupportActionBar();
+//            actionBar.setSelectedNavigationItem(1);
         }
     }
 
-
-//    public void updateAllView() {
-//        map.clear();
-//        ArrayList<Double> lat = new ArrayList<Double>();
-//        ArrayList<Double> lon = new ArrayList<Double>();
-//
-//        for (int i=0; i < positions.size(); i++) {
-//            lat.add(positions.get(i).latitude);
-//            lon.add(positions.get(i).longitude);
-//
-//            if (buildings.get(i).getBusynessNow() < 35) {
-//                Marker md = map.addMarker(new MarkerOptions()
-//                        .position(positions.get(i))
-//                        .title(buildingNames.get(i))
-//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
-//            } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-//                Marker md = map.addMarker(new MarkerOptions()
-//                        .position(positions.get(i))
-//                        .title(buildingNames.get(i))
-//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
-//            } else {
-//                Marker md = map.addMarker(new MarkerOptions()
-//                        .position(positions.get(i))
-//                        .title(buildingNames.get(i))
-//                        .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
-//            }
-//        }
-//        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
-//        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
-//        double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
-//        double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
-//        LatLng newPosition = new LatLng(newLat,newLon);
-//        float zoom;
-//        if (maxLat > maxLon) {
-//            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
-//        } else {
-//            zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
-//        }
-//        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
-//        map.animateCamera(cameraUpdate);
-//    }
 
 
     //Update study area
@@ -517,43 +437,139 @@ public class MapFragment extends Fragment {
         ArrayList<Double> lat = new ArrayList<Double>();
         ArrayList<Double> lon = new ArrayList<Double>();
         mdList.clear();
-        for (int i=0; i < buildingNames.size(); i++) {
-            if (i != 3) {
-                lat.add(positions.get(i).latitude);
-                lon.add(positions.get(i).longitude);
+        for (int i=0; i < buildings.size(); i++) {
+            if (buildings.get(i).getStudy()) {
+                lat.add(buildings.get(i).getLat());
+                lon.add(buildings.get(i).getLon());
                 if (buildings.get(i).getBusynessNow() < 35) {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greensc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greencoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greencrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenmarker))); // changing ICON
+                    }
                 } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowsc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowcoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowcrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowmarker))); // changing ICON
+                    }
                 } else {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redsc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redcoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redcrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redmarker))); // changing ICON
+                    }
                 }
                 mdList.add(md);
             }
         }
-
-        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
-        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
-        double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
-        double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
-        LatLng newPosition = new LatLng(newLat,newLon);
-        float zoom;
-        if (maxLat > maxLon) {
-            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
-        } else {
-            zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
+        try {
+            double newLat = (Collections.max(lat) + Collections.min(lat)) / 2;
+            double newLon = (Collections.max(lon) + Collections.min(lon)) / 2;
+            double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
+            double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
+            LatLng newPosition = new LatLng(newLat, newLon);
+            float zoom;
+            if (maxLat > maxLon) {
+                zoom = (float) (dZoom + (1 - (maxLat - 0.001099) / 0.006829) * 2);
+            } else {
+                zoom = (float) (dZoom + (1 - (maxLon - 0.001099) / 0.006829) * 2);
+            }
+            cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
+            map.animateCamera(cameraUpdate);
+        } catch (Exception e ) {
+            Log.d("ERROR", "error");
         }
-        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
-        map.animateCamera(cameraUpdate);
     }
 
     //Update food Area
@@ -565,53 +581,136 @@ public class MapFragment extends Fragment {
         ArrayList<Double> lat = new ArrayList<Double>();
         ArrayList<Double> lon = new ArrayList<Double>();
         mdList.clear();
-        for (int i=0; i < buildingNames.size(); i++) {
-            if (i == 1 || i == 3 || i == 5) {
-                lat.add(positions.get(i).latitude);
-                lon.add(positions.get(i).longitude);
+        for (int i=0; i < buildings.size(); i++) {
+            if (buildings.get(i).getFood()) {
+                lat.add(buildings.get(i).getLat());
+                lon.add(buildings.get(i).getLon());
                 if (buildings.get(i).getBusynessNow() < 35) {
-//                    md = map.addMarker(new MarkerOptions()
-//                            .position(positions.get(i))
-//                            .title(buildingNames.get(i))
-//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
-                    Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-                    Bitmap bmp = Bitmap.createBitmap(200, 50, conf);
-                    Canvas canvas = new Canvas(bmp);
-                    Paint paint = new Paint();
-                    paint.setColor(Color.BLACK);
-                    paint.setTextSize(16);
-
-                    canvas.drawText("TEXT", 0, 50, paint); // paint defines the text color, stroke width, size
-                    map.addMarker(new MarkerOptions()
-                                    .position(positions.get(i))
-                                            //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker2))
-                                    .icon(BitmapDescriptorFactory.fromBitmap(bmp))
-                                    .anchor(0.5f, 1)
-                    );
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greensc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greencoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greencrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenmarker))); // changing ICON
+                    }
                 } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-//                    md = map.addMarker(new MarkerOptions()
-//                            .position(positions.get(i))
-//                            .title(buildingNames.get(i))
-//                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
-                    Bitmap.Config conf = Bitmap.Config.ARGB_8888;
-                    Bitmap bmp = Bitmap.createBitmap(200, 50, conf);
-                    Canvas canvas = new Canvas(bmp);
-                    Paint paint = new Paint();
-                    paint.setColor(Color.BLACK);
-                    paint.setTextSize(16);
-
-                    canvas.drawText("TEXT", 0, 50, paint); // paint defines the text color, stroke width, size
-                    map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                                    //.icon(BitmapDescriptorFactory.fromResource(R.drawable.marker2))
-                            .icon(BitmapDescriptorFactory.fromBitmap(bmp))
-                            .anchor(0.5f, 1)
-                    );
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowsc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowcoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowcrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowmarker))); // changing ICON
+                    }
                 } else {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redsc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redcoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redcrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redmarker))); // changing ICON
+                    }
                 }
                 mdList.add(md);
             }
@@ -623,9 +722,9 @@ public class MapFragment extends Fragment {
         LatLng newPosition = new LatLng(newLat,newLon);
         float zoom;
         if (maxLat > maxLon) {
-            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
+            zoom = (float) (dZoom + (1- (maxLat-0.001099)/0.006829)*2);
         } else {
-            zoom = (float) (15.5 + (1 - (maxLon - 0.001099) / 0.006829) * 2);
+            zoom = (float) (dZoom + (1 - (maxLon - 0.001099) / 0.006829) * 2);
         }
         cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
         map.animateCamera(cameraUpdate);
@@ -640,25 +739,136 @@ public class MapFragment extends Fragment {
         ArrayList<Double> lat = new ArrayList<Double>();
         ArrayList<Double> lon = new ArrayList<Double>();
         mdList.clear();
-        for (int i=0; i < buildingNames.size(); i++) {
-            if (i == 1 || i == 3) {
-                lat.add(positions.get(i).latitude);
-                lon.add(positions.get(i).longitude);
+        for (int i=0; i < buildings.size(); i++) {
+            if (buildings.get(i).getRec()) {
+                lat.add(buildings.get(i).getLat());
+                lon.add(buildings.get(i).getLon());
                 if (buildings.get(i).getBusynessNow() < 35) {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greensc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greencoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greencrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.greenmarker))); // changing ICON
+                    }
                 } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowsc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowcoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowcrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.yellowmarker))); // changing ICON
+                    }
                 } else {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
+                    if (buildings.get(i).getName().equals("Klaus")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redklaus))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Student Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redsc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Computing")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redcoc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Clough")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redculc))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Library")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redlib))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("College of Architecture")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redmarker))); // changing ICON
+                    } else if (buildings.get(i).getName().equals("Campus Recreation Center")) {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redcrc))); // changing ICON
+                    } else {
+                        md = map.addMarker(new MarkerOptions()
+                                .position(new LatLng(buildings.get(i).getLat(), buildings.get(i).getLon()))
+                                .title(buildings.get(i).getName())
+                                .icon(BitmapDescriptorFactory.fromResource(R.drawable.redmarker))); // changing ICON
+                    }
                 }
                 mdList.add(md);
             }
@@ -671,54 +881,202 @@ public class MapFragment extends Fragment {
         LatLng newPosition = new LatLng(newLat,newLon);
         float zoom;
         if (maxLat > maxLon) {
-            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
+            zoom = (float) (dZoom + (1- (maxLat-0.001099)/0.006829)*2);
         } else {
-            zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
+            zoom = (float) (dZoom + (1- (maxLon-0.001099)/0.006829)*2);
         }
         cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
         map.animateCamera(cameraUpdate);
     }
 
-    //Update Recreation Area
-    public void updateFavView() {
-        map.clear();
-        ArrayList<Double> lat = new ArrayList<Double>();
-        ArrayList<Double> lon = new ArrayList<Double>();
-        for (int i=0; i < buildingNames.size(); i++) {
-            if (i == 0 || i == 1 || i == 3) {
-                lat.add(positions.get(i).latitude);
-                lon.add(positions.get(i).longitude);
-                if (buildings.get(i).getBusynessNow() < 35) {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.notbusy))); // changing ICON
-                } else if(buildings.get(i).getBusynessNow() >= 35 && buildings.get(i).getBusynessNow() < 70) {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.lessbusy))); // changing ICON
-                } else {
-                    md = map.addMarker(new MarkerOptions()
-                            .position(positions.get(i))
-                            .title(buildingNames.get(i))
-                            .icon(BitmapDescriptorFactory.fromResource(R.drawable.busy))); // changing ICON
+    class Wrapper
+    {
+        public int numOfParams;
+        public String result;
+    }
+
+    public class Busyness extends AsyncTask<String, String, Wrapper> {
+        public String test = "123";
+        @Override
+        protected Wrapper doInBackground(String... params) {
+            String urlString = params[0]; // URL to call
+            InputStream in = null;
+            // HTTP Get
+            int paramLength = params.length; //storing [0] url, [1] timestamp, no other param needed
+            if (paramLength == 3 || paramLength >=5) {
+                Log.d("ERROR", "params length error");
+            }
+            if (paramLength >=2) {
+                urlString = urlString + "?t=" + params[1];
+                Log.d("URL", urlString);
+            }
+            if (paramLength ==4) {
+                urlString = urlString + "/busyness/" + params[2] + "/" + params[3];
+                Log.d("URL", urlString);
+            }
+            try {
+                URL url = new URL(urlString);
+                HttpURLConnection urlConnection = (HttpURLConnection) url.openConnection();
+                in = new BufferedInputStream(urlConnection.getInputStream());
+            } catch (Exception e ) {
+                Log.d("ERROR", e.getMessage());
+            }
+            String result = convertStreamToString(in);
+
+//            Log.d("API", result);
+            Wrapper w = new Wrapper();
+            w.numOfParams = paramLength;
+            w.result = result;
+            return w;
+        }
+
+        private void getLocations(String response) {
+            //parse json
+            try {
+                JSONObject js = new JSONObject(response);
+                JSONArray bldgs = js.getJSONArray("locations");
+                buildings.clear();
+                for(int i = 0 ; i < bldgs.length() ; i++){
+                    String value = "0";
+                    String name = bldgs.getJSONObject(i).getString("name");
+                    String id = bldgs.getJSONObject(i).getString("id");
+                    JSONObject geo = bldgs.getJSONObject(i).getJSONObject("geocode");
+                    String lat = geo.getString("lat");
+                    String lon = geo.getString("long");
+                    Building b = new Building(id,name,Double.parseDouble(lat),Double.parseDouble(lon),0,false,false,false,false);
+                    JSONArray types = bldgs.getJSONObject(i).getJSONArray("types");
+                    String[] ts = types.toString().split("\\W");
+                    for (String t:ts) {
+                        if (t.equals("eat")) b.setFood(true);
+                        if (t.equals("study")) b.setStudy(true);
+                        if (t.equals("recreation")) b.setRec(true);
+                    }
+//                    Log.d("TYPE", ts[ts.length-1]);
+//                    Log.d("GEO", lat + ", " + lon);
+                    if (bldgs.getJSONObject(i).has("busyness")) {
+                        JSONObject keys = bldgs.getJSONObject(i).getJSONObject("busyness");
+                        value = keys.toString();
+
+
+//                        bldgnames.put(id, name);
+
+                        String[] tokens = value.split(":");
+                        String percent = tokens[tokens.length - 1];
+//                        Log.d("JSON", "key =" + id + "busyness" + percent);
+                        int roundPercent = Math.round(Float.parseFloat(percent.substring(0, percent.length() - 1)));
+//                        bldgbusyness.put(id, roundPercent);
+                        b.setBusyneesNow(roundPercent);
+                        Log.d("JSON", "key =" + id + ", busyness=" + roundPercent);
+//                    } else {
+//                        bldgnames.put(id, name);
+//                        bldgbusyness.put(id, "0");
+                    }
+//                    bldglocs.put(id, geo.toString());
+//                    Log.d("JSON", "key =" + id + "name" + name);
+//                    Log.d("JSON", "key =" + id + "geo" + geo.toString());
+                    buildings.add(b);
+
                 }
-//                md.showInfoWindow();
+
+            } catch (JSONException e) {
+                e.printStackTrace();
             }
         }
-        double newLat = (Collections.max(lat) + Collections.min(lat))/2;
-        double newLon = (Collections.max(lon) + Collections.min(lon))/2;
-        double maxLat = Math.abs(Collections.max(lat) - Collections.min(lat));
-        double maxLon = Math.abs(Collections.max(lon) - Collections.min(lon));
-        LatLng newPosition = new LatLng(newLat,newLon);
-        float zoom;
-        if (maxLat > maxLon) {
-            zoom = (float) (15.5 + (1- (maxLat-0.001099)/0.006829)*2);
-        } else {
-            zoom = (float) (15.5 + (1- (maxLon-0.001099)/0.006829)*2);
+
+        private void getBusynessNow(String response) {
+            //parse json
+            try {
+                JSONObject js = new JSONObject(response);
+                JSONObject keys = js.getJSONObject("busyness");
+                String id = js.getString("id");
+                String value = keys.toString();
+                String[]tokens = value.split(":");
+                String percent = tokens[tokens.length-1];
+                bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
+                Log.d("JSON", "key =" + id + "busyness" + percent);
+
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
         }
-        cameraUpdate = CameraUpdateFactory.newLatLngZoom(newPosition, zoom);
-        map.animateCamera(cameraUpdate);
+
+        private void getBusynessAtTime(String response) {
+            //parse json
+            try {
+                JSONObject js = new JSONObject(response);
+
+                for(int i = 0; i<js.names().length(); i++){
+                    String ts = js.names().getString(i);
+                    String bs = js.get(ts).toString();
+                    busynessTemp.put(ts, bs);
+                    Log.d("JSON", ts+", "+bs);
+                }
+            } catch (JSONException e) {
+                e.printStackTrace();
+            }
+        }
+
+        private String convertStreamToString(InputStream is) {
+
+            BufferedReader reader = new BufferedReader(new InputStreamReader(is));
+            StringBuilder sb = new StringBuilder();
+
+            String line = null;
+            try {
+                while ((line = reader.readLine()) != null) {
+                    sb.append(line + "\n");
+                }
+            } catch (IOException e) {
+                e.printStackTrace();
+            } finally {
+                try {
+                    is.close();
+                } catch (IOException e) {
+                    e.printStackTrace();
+                }
+            }
+            return sb.toString();
+        }
+
+        protected void onPostExecute(Wrapper w) {
+
+            getLocations(w.result);
+            System.out.println("result" + w.result);
+            for (Building b: buildings) {
+                Log.d("BLDG", b.getName()+ "  " + b.getBusynessNow());
+                Log.d("Hey", b.getLat() + "  " +  b.getLon());
+            }
+            if (first) {
+                studyButton.performClick();
+                first = false;
+            } else {
+                if (timeS) {
+                    if (study) {
+                        study = false;
+                        studyButton.performClick();
+                    } else if (food) {
+                        food = false;
+                        foodButton.performClick();
+                    } else if (rec) {
+                        rec = false;
+                        recButton.performClick();
+                    }
+                    timeS = false;
+                } else if (dateS) {
+                    if (study) {
+                        study = false;
+                        studyButton.performClick();
+                    } else if (food) {
+                        food = false;
+                        foodButton.performClick();
+                    } else if (rec) {
+                        rec = false;
+                        recButton.performClick();
+                    }
+                    dateS = false;
+                }
+            }
+            check = false;
+        }
     }
 }

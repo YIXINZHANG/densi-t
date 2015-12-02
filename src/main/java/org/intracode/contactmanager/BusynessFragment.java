@@ -245,18 +245,18 @@ public class BusynessFragment extends Fragment {
 
             String buildingName = hours.get(position);
             Log.d("NAME", buildingName + " " + busynessTemp.get(buildingName));
-            hour = (TextView) view.findViewById(R.id.hours);
-            hour.setText(hourPoints[position]);
-            busyness = (TextView) view.findViewById(R.id.busynessHours);
-//            rand = new Random();
-            String percent = busynessTemp.get(hours.get(position));
-            busyness.setText(percent + "%");
-//            Log.d("JSON", percent);
-            progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress2);
-            progress1.setProgressColor(Color.parseColor("#6960ec"));
-            progress1.setBackgroundColor(Color.parseColor("#e5e4e2"));
-            progress1.setMax(100);
-            progress1.setProgress(Integer.valueOf(percent));
+//            hour = (TextView) view.findViewById(R.id.hours);
+//            hour.setText(hourPoints[position]);
+//            busyness = (TextView) view.findViewById(R.id.busynessHours);
+////            rand = new Random();
+//            String percent = busynessTemp.get(hours.get(position));
+//            busyness.setText(percent + "%");
+////            Log.d("JSON", percent);
+//            progress1 = (RoundCornerProgressBar) view.findViewById(R.id.progress2);
+//            progress1.setProgressColor(Color.parseColor("#6960ec"));
+//            progress1.setBackgroundColor(Color.parseColor("#e5e4e2"));
+//            progress1.setMax(100);
+//            progress1.setProgress(Integer.valueOf(percent));
 
             return view;
         }

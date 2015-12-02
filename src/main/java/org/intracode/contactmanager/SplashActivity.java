@@ -79,17 +79,6 @@ public class SplashActivity extends Activity {
                  */
 
                 public void run() {
-                    // This method will be executed once the timer is over
-                    // Start your app main activity
-
-//                    server = ServerUtility.getInstance();
-//                    Busyness busy = new Busyness();
-//                    busy.execute(API);
-
-//                    gb = (GlobalVariables) getApplication();
-
-
-
 
                     Intent i = new Intent(SplashActivity.this, MainActivity.class);
 

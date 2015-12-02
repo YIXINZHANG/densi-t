@@ -63,15 +63,29 @@
             android:id="@+id/favView"
             android:background="@android:color/darker_gray"/>
 
-
-        <TextView
+        <LinearLayout
             android:layout_width="match_parent"
-            android:layout_height="wrap_content"
-            android:text="Suggestion"
-            android:textSize="20dp"
-            android:layout_marginTop="10dp"
-            android:textColor="#646565"
-            android:paddingLeft="10dp"/>
+            android:orientation="horizontal"
+            android:layout_height="40dp"
+            android:layout_marginTop="10dp">
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="Suggestion"
+                android:textSize="20dp"
+                android:textColor="#646565"
+
+                android:paddingLeft="10dp"/>
+
+            <Button
+                android:layout_width="wrap_content"
+                android:layout_height="40dp"
+                android:id="@+id/popButton"
+                android:text="Settings"
+                android:textSize="15dp"
+                android:layout_marginLeft="130dp"
+                android:layout_alignParentRight="true"/>
+        </LinearLayout>
 
         <!--<View-->
             <!--android:layout_width="match_parent"-->
@@ -123,7 +137,7 @@
         android:orientation="horizontal"
         android:layout_width="match_parent"
         android:layout_height="33dp"
-        android:background="#9D9D9E"
+        android:background="#EEECEE"
         android:layout_weight="0.1">
 
         <ImageButton

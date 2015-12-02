@@ -22,6 +22,7 @@ public class GlobalVariables extends Application {
     private  Map<String, String> bldgbusyness = new HashMap<String, String>();
     private  Map<String, String> busynessTemp = new HashMap<String, String>();
     private ArrayList<String> buildingNames = new ArrayList<String>();
+    private String sorting;
 
     public GlobalVariables() {
 
@@ -47,6 +48,10 @@ public class GlobalVariables extends Application {
         this.buildingNames.add(name);
     }
 
+    public void setSorting (String s) {
+        this.sorting = s;
+    }
+
     public Map<String, String> getBldgnames () {
         return this.bldgnames;
     }
@@ -66,6 +71,8 @@ public class GlobalVariables extends Application {
     public ArrayList<String> getBuildingNames() {
         return this.buildingNames;
     }
+
+    public String getSorting() { return this.sorting; }
 //
 //    public Integer getPercent(Integer i) {
 //        return percentages.get(i);

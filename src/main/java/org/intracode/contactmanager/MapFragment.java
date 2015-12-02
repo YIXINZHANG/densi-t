@@ -221,7 +221,7 @@ public class MapFragment extends Fragment {
     private void setSpinnerContent( View view ) {
         c = Calendar.getInstance();
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        System.out.println(dayOfWeek);
+//        System.out.println(dayOfWeek);
 //        Toast.makeText(getActivity().getApplicationContext(), dayOfWeek, Toast.LENGTH_LONG).show();
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
@@ -244,12 +244,8 @@ public class MapFragment extends Fragment {
                 // TODO Auto-generated method stub
                 currTime = position;
                 if (!check) {
-//                for (Building b : buildings) {
-//                    b.setBusyneesNow(b.getBusynessArray()[currTime]);
-//                }
-
                     mCallback2.onDayTimeSelected2(dateSpinner.getSelectedItemPosition(), position);
-                    System.out.println("calling");
+//                    System.out.println("calling");
                     check = true;
                     String[] params = new String[2];
                     params[0] = API;
@@ -258,13 +254,6 @@ public class MapFragment extends Fragment {
                     check = true;
                     Busyness busy = new Busyness();
                     busy.execute(params);
-//                    if (study) {
-//                        updateStudyView();
-//                    } else if (food) {
-//                        updateFoodView();
-//                    } else if (rec) {
-//                        updateRecView();
-//                    }
                 }
             }
 
@@ -291,42 +280,9 @@ public class MapFragment extends Fragment {
                 // TODO Auto-generated method stub
                 currDate = position;
                 if (!check) {
-//                    if (currDate == 0 || currDate == 6) {
-//                        for (Building b : buildings) {
-//                            Random r = new Random();
-//                            int a = r.nextInt(40) - 20;
-////                        if ((b.getBusynessArray()[currTime])/2 - a < 0) {
-////                            a = 0;
-////                        } else {
-////                            a = ((b.getBusynessArray()[currTime]) - a)/2;
-////                        }
-//                            b.setBusyneesNow(a);
-//                        }
-//                        System.out.println("weekend");
-//                    } else {
-//                        for (Building b : buildings) {
-//                            Random r = new Random();
-//                            int a = r.nextInt(40) - 20;
-////                        if (b.getBusynessArray()[currTime] - a < 0) {
-////                            a = 0;
-////                        } else {
-////                            a = b.getBusynessArray()[currTime] - a;
-////                            System.out.println(a);
-////                        }
-//                            b.setBusyneesNow(a);
-//                        }
-//                    }
-                    
                     mCallback2.onDayTimeSelected2(position, timeSpinner.getSelectedItemPosition());
-                    System.out.println("calling2");
+//                    System.out.println("calling2");
                     check = true;
-//                    if (study) {
-//                        updateStudyView();
-//                    } else if (food) {
-//                        updateFoodView();
-//                    } else if (rec) {
-//                        updateRecView();
-//                    }
                     String[] params = new String[2];
                     params[0] = API;
                     params[1] = timeToT(currTime,currDate);
@@ -352,7 +308,7 @@ public class MapFragment extends Fragment {
 //        cameraUpdate = CameraUpdateFactory.newLatLngZoom(position, 15.0f);
 //        map.animateCamera(cameraUpdate);
         // update the view
-        System.out.println("check " +  check);
+//        System.out.println("check " +  check);
         dateSpinner.setSelection(day);
         timeSpinner.setSelection(time);
         if (!check) {
@@ -415,7 +371,7 @@ public class MapFragment extends Fragment {
             // TODO Auto-generated method stub
             String buidlingName = marker.getTitle();
             int number = buildingNames.indexOf(buidlingName);
-            System.out.println(buidlingName + number);
+//            System.out.println(buidlingName + number);
             ///////////////////////////////////////////////////////////////////////////
             String name = "Something"; // please add the name of building
             String id = "ID"; // add the ID
@@ -1041,7 +997,7 @@ public class MapFragment extends Fragment {
         protected void onPostExecute(Wrapper w) {
 
             getLocations(w.result);
-            System.out.println("result" + w.result);
+//            System.out.println("result" + w.result);
             for (Building b: buildings) {
                 Log.d("BLDG", b.getName()+ "  " + b.getBusynessNow());
                 Log.d("Hey", b.getLat() + "  " +  b.getLon());

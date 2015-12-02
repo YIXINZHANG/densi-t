@@ -47,13 +47,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
         ArrayList<String> bnames = new ArrayList<>();
-        bnames.add("CULC");
+        bnames.add("Clough");
         bnames.add("Student Center");
-        bnames.add("Library 4th Floor");
-        bnames.add("CRC");
+        bnames.add("Library");
+        bnames.add("Campus Recreation Center");
         bnames.add("Klaus");
-        bnames.add("CoC");
-        bnames.add("Howey L2");
+        bnames.add("College of Computing");
+        bnames.add("College of Architecture");
         gv = (GlobalVariables) getApplication();
 
         //Adding preferences
@@ -68,6 +68,13 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
             }
 
         }
+        try {
+            System.out.println(settings.getString("Setting", null));
+        } catch (Exception e) {
+            System.out.println("pass");
+        }
+
+        gv.setSorting(settings.getString("Setting", null));
 //        Toast.makeText(this, a, Toast.LENGTH_LONG).show();
         ////////////////////////////////////////////////////////////////////////
 
@@ -151,6 +158,17 @@ public class MainActivity extends ActionBarActivity implements ActionBar.TabList
         editor.commit();
 
 
+    }
+
+    public void onSettingSelected(String s) {
+        SharedPreferences settings = getSharedPreferences(PREFS_NAME, 0);
+        SharedPreferences.Editor editor = settings.edit();
+        editor.putString("Setting", s);
+//        editor.putBoolean(favoriteList, dummySetting);
+//        editor.putInt("clicked", clickedPosition);
+
+        // Commit the edits!
+        editor.commit();
     }
 
     public void onDayTimeSelected2(int day, int time) {

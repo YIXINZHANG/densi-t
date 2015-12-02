@@ -73,7 +73,6 @@ public class BusynessActivity extends Activity {
     private String name;
     private Calendar c;
     private int dayOfWeek;
-    private int currDate = 0;
     private int hour;
     private int minute;
     private String id;
@@ -85,6 +84,7 @@ public class BusynessActivity extends Activity {
     private String API = "http://densit-api.appspot.com/locations";
     private Spinner dateSpinner;
     private boolean first = true;
+    private int currDate, currTime;
 
     private ArrayAdapter<String> adapter;
     private Map<Integer, String> timeStamps = new HashMap<Integer, String>();
@@ -100,8 +100,10 @@ public class BusynessActivity extends Activity {
         name = data.getString("NAME");
         lat = data.getDouble("LAT");
         lon = data.getDouble("LON");
+        currDate = data.getInt("DATE");
+        currTime = data.getInt("TIME");
 
-        System.out.println("Activity " + id + " " + name + " " + lat + " "  + lon);
+        System.out.println("Activity " + currDate);
         Busyness busy = new Busyness();
         String[] params = new String[2];
         params[0] = API;
@@ -110,7 +112,6 @@ public class BusynessActivity extends Activity {
 
         c = Calendar.getInstance();
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
-        currDate = dayOfWeek;
         hour = c.get(Calendar.HOUR_OF_DAY);
         minute = c.get(Calendar.MINUTE);
 
@@ -124,7 +125,7 @@ public class BusynessActivity extends Activity {
         adapters2.setDropDownViewResource(android.R.layout.simple_spinner_dropdown_item);
         // Apply the adapter to the spinner
         dateSpinner.setAdapter(adapters2);
-        dateSpinner.setSelection(dayOfWeek - 1);
+        dateSpinner.setSelection(currDate);
         dateSpinner.setOnItemSelectedListener(new AdapterView.OnItemSelectedListener() {
 
             @Override
@@ -200,6 +201,9 @@ public class BusynessActivity extends Activity {
         @Override
         public View getView(final int position, View view, ViewGroup parent) {
             view = getLayoutInflater().inflate(R.layout.listview_hours, parent, false);
+            if (position == currTime) {
+                view.setBackgroundColor(Color.LTGRAY);
+            }
             TextView tx = (TextView) view.findViewById(R.id.hours2);
             System.out.println("Printing" + hourPoints[position]);
             tx.setText(hourPoints[position]);
@@ -214,6 +218,7 @@ public class BusynessActivity extends Activity {
                     progress1.setProgressColor(Color.parseColor("#E64436"));
                 }
                 progress1.setProgressBackgroundColor(Color.parseColor("#fff3f3f3"));
+
                 progress1.setMax(100);
                 progress1.setProgress((float) dHours);
             } catch (Exception e ){
@@ -259,7 +264,6 @@ public class BusynessActivity extends Activity {
             }
             String result = convertStreamToString(in);
 
-//            Log.d("API", result);
             Wrapper w = new Wrapper();
             w.numOfParams = paramLength;
             w.result = result;

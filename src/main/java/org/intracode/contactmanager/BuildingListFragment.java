@@ -102,7 +102,7 @@ public class BuildingListFragment extends Fragment {
     private ImageButton fa, food, study, recreation;
     private boolean first = true;
     private boolean dateS, timeS;
-    private TextView favText, othText;
+    private TextView favText, othText, sortText;
     private View favLine, favLine2;
     private Spinner timeSpinner, dateSpinner;
     private boolean check = false;
@@ -118,6 +118,7 @@ public class BuildingListFragment extends Fragment {
     public interface UpdateListener {
         public void onArticleSelected(String name, boolean mark);
         public void onDayTimeSelected(int day, int time);
+        public void onSettingSelected(String s);
     }
 
     @Override
@@ -155,6 +156,7 @@ public class BuildingListFragment extends Fragment {
         for (String s:favList) {
             favoriteList.add(s);
         }
+
 
         // make api call
         String[] params = new String[2];
@@ -207,6 +209,22 @@ public class BuildingListFragment extends Fragment {
         favLine = (View) getActivity().findViewById(R.id.favView);
         othText = (TextView) getActivity().findViewById(R.id.othText);
         favLine2 = (View) getActivity().findViewById(R.id.favView2);
+        sortText = (TextView) getActivity().findViewById(R.id.sortStatus);
+
+        String sorting = gv.getSorting();
+        if (sorting == null) {
+            busynessS = true;
+            distanceS = false;
+            sortText.setText("B");
+        } else if (sorting.equals("B")) {
+            busynessS = true;
+            distanceS = false;
+            sortText.setText("B");
+        } else {
+            busynessS = false;
+            distanceS = true;
+            sortText.setText("D");
+        }
 
         c = Calendar.getInstance();
         dayOfWeek = c.get(Calendar.DAY_OF_WEEK);
@@ -214,7 +232,7 @@ public class BuildingListFragment extends Fragment {
         hour = c.get(Calendar.HOUR_OF_DAY);
         currTime = hour;
         currDate = dayOfWeek;
-        System.out.println("hey" + currTime + " " + currDate);
+//        System.out.println("hey" + currTime + " " + currDate);
         minute = c.get(Calendar.MINUTE);
         changeList();
 //        for (Building b:buildings) {
@@ -250,7 +268,7 @@ public class BuildingListFragment extends Fragment {
 //                        b.setBusyneesNow(b.getBusynessArray()[currTime]);
 //                    }
 
-                        System.out.println("called b");
+//                        System.out.println("called b");
                         if (!first) {
                             mCallback.onDayTimeSelected(dateSpinner.getSelectedItemPosition(), position);
                         }
@@ -292,7 +310,7 @@ public class BuildingListFragment extends Fragment {
                     currDate = position;
                     if (!check) {
 
-                        System.out.println("called b2");
+//                        System.out.println("called b2");
                         if (!first) {
                             mCallback.onDayTimeSelected(position, timeSpinner.getSelectedItemPosition());
                         }
@@ -436,18 +454,20 @@ public class BuildingListFragment extends Fragment {
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Log.d("ID", Integer.toString(position));
+//                Log.d("ID", Integer.toString(position));
                 String name = (String) parent.getItemAtPosition(position);
-                System.out.println("hello" + name);
+//                System.out.println("hello" + name);
                 Intent i = new Intent(getActivity(), BusynessActivity.class);
                 i.putExtra("NAME", name);
                 for (Building b:buildingsFinal) {
-                    System.out.println("buildings " + name);
+//                    System.out.println("buildings " + name);
                     if (b.getName().equals(name)) {
-                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+//                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
                         i.putExtra("ID", b.getId());
                         i.putExtra("LAT", b.getLat());
                         i.putExtra("LON", b.getLon());
+                        i.putExtra("DATE", currDate);
+                        i.putExtra("TIME", currTime);
                     }
                 }
                 startActivity(i);
@@ -466,18 +486,20 @@ public class BuildingListFragment extends Fragment {
         AdapterView.OnItemClickListener listener2 = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Log.d("ID", Integer.toString(position));
+//                Log.d("ID", Integer.toString(position));
                 String name = (String) parent.getItemAtPosition(position);
-                System.out.println("hello" + name);
+//                System.out.println("hello" + name);
                 Intent i = new Intent(getActivity(), BusynessActivity.class);
                 i.putExtra("NAME", name);
                 for (Building b:buildingsFinal) {
-                    System.out.println("buildings " + name);
+//                    System.out.println("buildings " + name);
                     if (b.getName().equals(name)) {
-                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+//                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
                         i.putExtra("ID", b.getId());
                         i.putExtra("LAT", b.getLat());
                         i.putExtra("LON", b.getLon());
+                        i.putExtra("DATE", currDate);
+                        i.putExtra("TIME", currTime);
                     }
                 }
                 startActivity(i);
@@ -498,18 +520,20 @@ public class BuildingListFragment extends Fragment {
         AdapterView.OnItemClickListener listener3 = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Log.d("ID", Integer.toString(position));
+//                Log.d("ID", Integer.toString(position));
                 String name = (String) parent.getItemAtPosition(position);
-                System.out.println("hello" + name);
+//                System.out.println("hello" + name);
                 Intent i = new Intent(getActivity(), BusynessActivity.class);
                 i.putExtra("NAME", name);
                 for (Building b:buildingsFinal) {
-                    System.out.println("buildings " + name);
+//                    System.out.println("buildings " + name);
                     if (b.getName().equals(name)) {
-                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+//                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
                         i.putExtra("ID", b.getId());
                         i.putExtra("LAT", b.getLat());
                         i.putExtra("LON", b.getLon());
+                        i.putExtra("DATE", currDate);
+                        i.putExtra("TIME", currTime);
                     }
                 }
                 startActivity(i);
@@ -576,18 +600,20 @@ public class BuildingListFragment extends Fragment {
         AdapterView.OnItemClickListener listener = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Log.d("ID", Integer.toString(position));
+//                Log.d("ID", Integer.toString(position));
                 String name = (String) parent.getItemAtPosition(position);
-                System.out.println("hello" + name);
+//                System.out.println("hello" + name);
                 Intent i = new Intent(getActivity(), BusynessActivity.class);
                 i.putExtra("NAME", name);
                 for (Building b:buildingsFinal) {
-                    System.out.println("buildings " + name);
+//                    System.out.println("buildings " + name);
                     if (b.getName().equals(name)) {
-                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
+//                        System.out.println("name:" + b.getId() + "lat: " + b.getLat() + " lon: " + b.getLon());
                         i.putExtra("ID", b.getId());
                         i.putExtra("LAT", b.getLat());
                         i.putExtra("LON", b.getLon());
+                        i.putExtra("DATE", currDate);
+                        i.putExtra("TIME", currTime);
                     }
                 }
                 startActivity(i);
@@ -622,7 +648,7 @@ public class BuildingListFragment extends Fragment {
         AdapterView.OnItemClickListener listener3 = new AdapterView.OnItemClickListener() {
             public void onItemClick(AdapterView<?> parent, View view, int position,
                                     long id) {
-                Log.d("ID", Integer.toString(position));
+//                Log.d("ID", Integer.toString(position));
             }
         };
         listViewOthers.setOnItemClickListener(listener3);
@@ -1110,67 +1136,86 @@ public class BuildingListFragment extends Fragment {
             buildingNamesFavorite.clear();
             buildingNamesOthers.clear();
             buildingNamesSuggestion.clear();
-            LocationManager locationManager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
-            // get the last know location from your location manager.
-            Location location= locationManager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
-            // now get the lat/lon from the location and do something with it.
-            double curLat = location.getLatitude();
-            double curLon = location.getLongitude();
-            float maxDistance = 0f;
-//            Location loc1 = new Location("");
-//            loc1.setLatitude(lat1);
-//            loc1.setLongitude(lon1);
-//
-//            Location loc2 = new Location("");
-//            loc2.setLatitude(lat2);
-//            loc2.setLongitude(lon2);
+            if (buildingNames.size() == 1) {
+                buildingNamesSuggestion.add(buildingNames.get(0));
+            } else {
+                try {
+                    System.out.println(buildingsFinal.size());
+                    LocationManager manager = (LocationManager) getActivity().getSystemService(Context.LOCATION_SERVICE);
+                    // get the last know location from your location manager.
+                    Location location = manager.getLastKnownLocation(LocationManager.GPS_PROVIDER);
+                    System.out.println(location);
+                    // now get the lat/lon from the location and do something with it.
+                    double curLat = location.getLatitude();
+                    double curLon = location.getLongitude();
 
-            for (Building b: buildingsFinal) {
-                for (String name:buildingNames) {
-                    if (b.getName() == name) {
-                        Location loc = new Location("");
-                        loc.setLatitude(b.getLat());
-                        loc.setLongitude(b.getLon());
-                        double dist = location.distanceTo(loc);
-                        if (maxDistance > dist) {
-                            maxDistance = b.getBusynessNow();
-//                            lowestName = name;
-                        }
-                    }
-                }
-            }
-            double lowestD = 1;
-            String lowestName ="";
-            for (Building b: buildingsFinal) {
-                for (String name:buildingNames) {
-                    if (b.getName() == name) {
-                        Location loc = new Location("");
-                        loc.setLatitude(b.getLat());
-                        loc.setLongitude(b.getLon());
-                        double dist = location.distanceTo(loc);
-
-                        double math = Math.pow((b.getBusynessNow() / 100),2) + Math.pow((dist / maxDistance), 2);
-                        if (lowestD > math) {
-                            lowestD = math;
-                            lowestName = name;
-                        }
-                    }
-                }
-            }
-            buildingNamesSuggestion.add(lowestName);
-            for (Building b: buildingsFinal) {
-                for (String name:buildingNames) {
-                    if (b.getName() == name) {
-                        if (b.getFavorite()) {
-                            if (b.getName() != lowestName) {
-                                buildingNamesFavorite.add(b.getName());
-                            }
-                        } else {
-                            if (b.getName() != lowestName) {
-                                buildingNamesOthers.add(b.getName());
+                    double maxDistance = 0;
+                    //            Location loc1 = new Location("");
+                    //            loc1.setLatitude(lat1);
+                    //            loc1.setLongitude(lon1);
+                    //
+                    //            Location loc2 = new Location("");
+                    //            loc2.setLatitude(lat2);
+                    //            loc2.setLongitude(lon2);
+                    //                System.out.println("Location2: " + location);
+                    for (Building b : buildingsFinal) {
+                        for (String name : buildingNames) {
+                            if (b.getName() == name) {
+                                Location loc = new Location("");
+                                loc.setLatitude(b.getLat());
+                                loc.setLongitude(b.getLon());
+                                double dist = location.distanceTo(loc);
+                                //                            System.out.println("Location: " + dist);
+                                if (maxDistance < dist) {
+                                    maxDistance = dist;
+                                    //                            lowestName = name;
+                                }
                             }
                         }
                     }
+                    System.out.println("MaxDist: " + maxDistance);
+                    double lowestD = 1;
+                    String lowestName = "";
+                    for (Building b : buildingsFinal) {
+                        for (String name : buildingNames) {
+                            if (b.getName() == name) {
+                                Location loc = new Location("");
+                                loc.setLatitude(b.getLat());
+                                loc.setLongitude(b.getLon());
+                                double dist = location.distanceTo(loc);
+
+                                double math = Math.pow(b.getBusynessNow(), 2) / 10000 + Math.pow((dist / maxDistance), 2);
+                                math = Math.sqrt(math);
+                                System.out.println("math: " + math + " name: " + name);
+                                System.out.println("math2: " + Math.pow(b.getBusynessNow(), 2) / 10000 + " math2: " + Math.pow((dist / maxDistance), 2));
+
+                                if (lowestD > math) {
+                                    lowestD = math;
+                                    lowestName = name;
+                                }
+                            }
+                        }
+                    }
+                    System.out.println("lowest:" + lowestName);
+                    buildingNamesSuggestion.add(lowestName);
+                    for (Building b : buildingsFinal) {
+                        for (String name : buildingNames) {
+                            if (b.getName() == name) {
+                                if (b.getFavorite()) {
+                                    if (b.getName() != lowestName) {
+                                        buildingNamesFavorite.add(b.getName());
+                                    }
+                                } else {
+                                    if (b.getName() != lowestName) {
+                                        buildingNamesOthers.add(b.getName());
+                                    }
+                                }
+                            }
+                        }
+                    }
+                } catch (Exception e) {
+                    busynessS = true;
+                    distanceS = false;
                 }
             }
         } else if (busynessS) {
@@ -1225,12 +1270,15 @@ public class BuildingListFragment extends Fragment {
 //        map.animateCamera(cameraUpdate);
         // update the view
 
+//        System.out.println("bl reload");
         dateSpinner.setSelection(day);
         timeSpinner.setSelection(time);
         if (!check) {
+//            System.out.println("bl reload2");
             String[] params = new String[2];
             params[0] = API;
             params[1] = timeToT(currTime,currDate);
+            timeS = true;
             dateS = true;
             Busyness busy = new Busyness();
 //            System.out.println("here");
@@ -1317,7 +1365,7 @@ public class BuildingListFragment extends Fragment {
                         int roundPercent = Math.round(Float.parseFloat(percent.substring(0, percent.length() - 1)));
 //                        bldgbusyness.put(id, roundPercent);
                         b.setBusyneesNow(roundPercent);
-                        Log.d("JSON", "key =" + id + ", busyness=" + roundPercent);
+//                        Log.d("JSON", "key =" + id + ", busyness=" + roundPercent);
 //                    } else {
 //                        bldgnames.put(id, name);
 //                        bldgbusyness.put(id, "0");
@@ -1344,7 +1392,7 @@ public class BuildingListFragment extends Fragment {
                 String[]tokens = value.split(":");
                 String percent = tokens[tokens.length-1];
                 bldgbusyness.put(id, percent.substring(0, percent.length() - 1));
-                Log.d("JSON", "key =" + id + "busyness" + percent);
+//                Log.d("JSON", "key =" + id + "busyness" + percent);
 
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1360,7 +1408,7 @@ public class BuildingListFragment extends Fragment {
                     String ts = js.names().getString(i);
                     String bs = js.get(ts).toString();
                     busynessTemp.put(ts, bs);
-                    Log.d("JSON", ts+", "+bs);
+//                    Log.d("JSON", ts+", "+bs);
                 }
             } catch (JSONException e) {
                 e.printStackTrace();
@@ -1393,7 +1441,7 @@ public class BuildingListFragment extends Fragment {
 
             getLocations(w.result);
             for (Building b: buildingsFinal) {
-                Log.d("BLDG2", b.getName()+ "  " + b.getBusynessNow());
+//                Log.d("BLDG2", b.getName()+ "  " + b.getBusynessNow());
                 for (String s: favoriteList) {
                     if (b.getName().equals(s)) {
                         b.setFavorite();
@@ -1446,6 +1494,8 @@ public class BuildingListFragment extends Fragment {
                         // Do nothing but close the dialog
                         busynessS = true;
                         distanceS = false;
+                        mCallback.onSettingSelected("D");
+                        sortText.setText("B");
                         if (stu) {
                             stu = false;
                             study.performClick();
@@ -1466,6 +1516,8 @@ public class BuildingListFragment extends Fragment {
                 // Do nothing
                 busynessS = true;
                 distanceS = false;
+                mCallback.onSettingSelected("D");
+                sortText.setText("D");
                 if (stu) {
                     stu = false;
                     study.performClick();

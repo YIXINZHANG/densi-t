@@ -85,6 +85,17 @@
                 android:textSize="15dp"
                 android:layout_marginLeft="130dp"
                 android:layout_alignParentRight="true"/>
+
+            <TextView
+                android:layout_width="wrap_content"
+                android:layout_height="wrap_content"
+                android:text="B"
+                android:id="@+id/sortStatus"
+                android:textSize="20dp"
+                android:textColor="#FFFFFF"
+                android:background="#37ABE2"
+                android:layout_gravity="center"
+                android:paddingLeft="10dp"/>
         </LinearLayout>
 
         <!--<View-->
